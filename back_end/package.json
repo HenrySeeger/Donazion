@@ -11,14 +11,21 @@
     "@swc/core": "^1.15.0",
     "@swc/jest": "^0.2.39",
     "@types/jest": "^30",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^24.10.1",
-    "jest": "^30",
     "aws-cdk": "2.1148.0",
+    "esbuild": "^0.28.2",
+    "jest": "^30",
     "tsx": "^4.23.0",
     "typescript": "~7.0.2"
   },
   "dependencies": {
+    "@aws-sdk/client-ssm": "^3.1172.0",
     "aws-cdk-lib": "^2.275.0",
-    "constructs": "^10.5.0"
+    "bcryptjs": "^3.0.3",
+    "constructs": "^10.5.0",
+    "dotenv": "^18.0.10",
+    "jsonwebtoken": "^9.0.3",
+    "mysql2": "^3.24.6"
   }
 }

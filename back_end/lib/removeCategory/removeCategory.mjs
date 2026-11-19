@@ -13,8 +13,8 @@ export const handler = async (event) => {
   
   try {
     
-    // result = 
-    code = 200
+    result = ""
+    code = 200 // Can also produce a 400
   } catch (error) {
     result = error // May want to include additional text around the given error message
     code = 400

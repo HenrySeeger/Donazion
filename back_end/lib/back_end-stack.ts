@@ -34,16 +34,16 @@ export class BackEndStack extends cdk.Stack {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'default.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, 'default')),
-      vpc: vpc,                                                             // Reference the VPC defined above
-      securityGroups: [securityGroup],                                      // Associate the security group
-      timeout: Duration.seconds(3),                                         // Example timeout, adjust as needed
+      vpc: vpc,
+      securityGroups: [securityGroup],
+      timeout: Duration.seconds(3),
     })
 
     const api_endpoint = new apigw.LambdaRestApi(this, `calculatorapi`, {
       handler: default_fn,
       restApiName: `CalculatorAPI`, 
       proxy: false,
-      defaultCorsPreflightOptions: {                                        // Optional BUT very helpful: Add CORS configuration 
+      defaultCorsPreflightOptions: { // Optional but helpful: Add CORS configuration 
         allowOrigins: apigw.Cors.ALL_ORIGINS,
         allowMethods: apigw.Cors.ALL_METHODS,
         allowHeaders: apigw.Cors.DEFAULT_HEADERS,

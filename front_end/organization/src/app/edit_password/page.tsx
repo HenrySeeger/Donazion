@@ -8,6 +8,7 @@ export default function Home() {
     <div className={styles.page}>
       <Nav current_page="edit password"/>
       <h1>Edit Password</h1>
+      <p style={{marginBottom: "30px"}}>(Not Currently Connected to the Back End)</p>
       <input placeholder={"Enter existing password"}/>
       <input placeholder={"Enter new password"}/>
       <input placeholder={"Re-enter existing password"}/>

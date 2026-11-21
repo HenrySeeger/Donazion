@@ -3,6 +3,7 @@ import React from 'react'
 import styles from "../page.module.css";
 import Nav from "../page_navigation";
 import CategoriesTable from "./boundary";
+import Link from 'next/link';
 
 interface DictFormat {
   id: number;
@@ -59,9 +60,10 @@ export default function Home() {
   return (
     <div className={styles.page}>
       <Nav current_page="item categories"/>
-      <button className={styles.button} style={{position: "absolute", top: "60px", right: "10px", zIndex: 0}}>Edit Categories and Items</button>
+      <Link href="/edit_item_categories" className={styles.button} style={{position: "absolute", top: "60px", right: "10px", zIndex: 0}}>Edit Categories and Items</Link>
       <button className={styles.button} style={{position: "absolute", top: "100px", right: "10px", zIndex: 0}}>Upload Items</button>
-      {/* <h1 style={{marginTop: 0}}>Categories and Items</h1><br/> */}
+      <h1 style={{marginTop: 0, marginBottom: "0px"}}>Categories and Items</h1>
+      <p style={{marginTop: 0, marginBottom: "30px"}}>(Not Currently Connected to the Back End)</p>
       {true ? <CategoriesTable categoriesAndItemsJSON={test_input}></CategoriesTable> : <br/>}
     </div>
 )}

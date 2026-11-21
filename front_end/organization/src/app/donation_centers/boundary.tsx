@@ -1,12 +1,10 @@
 import React from 'react'
 import styles from "../page.module.css"
 
-interface DictFormat {
-  donationCenters: {
-    name: string;
-    inventoryCount: number;
-    inventoryValue: number;
-  }[];
+interface jsonFormat {
+  name : string,
+  inventoryCount : number
+  inventoryValue : number
 }
 
 function range(stop: number) {
@@ -17,11 +15,9 @@ function range(stop: number) {
   return result
 }
 
-export default function DonationCenterPagination(props: {donationCenters: DictFormat}) {
-  let donationCenters = props.donationCenters["donationCenters"]
-  // donationCenters.push
-
-  const pageLen = 5
+export default function DonationCenterPagination(props: {donationCenters: jsonFormat[]}) {
+  let donationCenters = props.donationCenters
+  const pageLen = 10
   const [pageNum, setPageNum] = React.useState(1)
 
   function decrementPage(): void {
@@ -47,7 +43,7 @@ export default function DonationCenterPagination(props: {donationCenters: DictFo
           </tr>
         </thead>
         <tbody style={{whiteSpace: "pre"}}>
-          {donationCenters.filter((dc: DictFormat["donationCenters"][0], index: number) => pageLen * (pageNum - 1) <= index && index < pageLen * pageNum).map((dc: DictFormat["donationCenters"][0], index: number) => <tr key={index}>
+          {donationCenters.filter((dc: jsonFormat, index: number) => pageLen * (pageNum - 1) <= index && index < pageLen * pageNum).map((dc: jsonFormat, index: number) => <tr key={index}>
             <td key={dc.name}>{dc.name}</td>
             <td key={dc.inventoryCount}>{dc.inventoryCount}</td>
             <td key={dc.inventoryValue}>${dc.inventoryValue.toFixed(2)}</td>

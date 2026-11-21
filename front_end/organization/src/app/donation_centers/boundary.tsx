@@ -21,7 +21,7 @@ export default function DonationCenterPagination(props: {donationCenters: DictFo
   let donationCenters = props.donationCenters["donationCenters"]
   // donationCenters.push
 
-  const pageLen = 5
+  const pageLen = 10
   const [pageNum, setPageNum] = React.useState(1)
 
   function decrementPage(): void {

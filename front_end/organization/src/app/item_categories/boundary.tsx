@@ -1,4 +1,5 @@
 import styles from "../page.module.css"
+import { jsonFormat } from "./page";
 
 interface DictFormat {
   id: number;
@@ -10,14 +11,14 @@ interface DictFormat {
   }[];
 }
 
-export default function CategoriesTable(props: {categoriesAndItemsJSON: {[key: string] : DictFormat}}) {
-  let json: {[key: string] : DictFormat} = props.categoriesAndItemsJSON
-  let keys: string[] = Object.keys(json)
+export default function CategoriesTable(props: {categoriesJSON: jsonFormat[]}) {
+  let json: jsonFormat[] = props.categoriesJSON
+  // let keys: string[] = Object.keys(json)
 
-  function SingleCategoryTable(props: {categoryName: string, singleCategoryJSON: DictFormat["items"]}) {
+  function SingleCategoryTable(props: {categoryJSON: jsonFormat}) {
     return (
       <div>
-        <h2>{props.categoryName}</h2>
+        <h2>{props.categoryJSON.name}</h2>
         <table>
           <thead>
             <tr>
@@ -27,7 +28,7 @@ export default function CategoriesTable(props: {categoriesAndItemsJSON: {[key: s
             </tr>
           </thead>
           <tbody>
-            {props.singleCategoryJSON.map((item: DictFormat["items"][0]) => <tr key={item.id}>
+            {props.categoryJSON.items.map((item: jsonFormat["items"][0]) => <tr key={item.IID}>
               <td key={item.name}>{item.name}</td>
               <td key={item.low}>{item.low}</td>
               <td key={item.high}>{item.high}</td>
@@ -42,7 +43,7 @@ export default function CategoriesTable(props: {categoriesAndItemsJSON: {[key: s
 
   return (
     <div>
-      {keys.map((key: string) => (<SingleCategoryTable key={key} categoryName={key} singleCategoryJSON={json[key]["items"]}></SingleCategoryTable>))}
+      {json.map((category: jsonFormat) => (<SingleCategoryTable key={category.CID} categoryJSON={category}></SingleCategoryTable>))}
     </div>
   )
 }

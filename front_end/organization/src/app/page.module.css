@@ -88,6 +88,18 @@
   text-decoration: none;
 }
 
+.disabled_nav_container_a {
+  justify-content: center;
+  text-align: center;
+  padding: 10px 15px;
+  background-color: rgb(255, 255, 255);
+  border-left: 1px solid #000000;
+  border-bottom: 2px solid #000000;
+  border-right: 1px solid #000000;
+  width : 25%;
+  text-decoration: none;  
+}
+
 @media (hover: hover) and (pointer: fine) {
     .nav_container a:hover {
       --nav-deselected: #e2f3f8;
@@ -121,6 +133,14 @@
     border-right: 1px solid #ffffff;
     background-color: #000;
   }
+
+.disabled_nav_container_a {
+    border-left: 1px solid #4a4a4a;
+    border-bottom: 2px solid #4a4a4a;
+    border-right: 1px solid #4a4a4a;
+    background-color: #000;
+    color: #4a4a4a;
+}
   
   .box{
     background-color: #141414;

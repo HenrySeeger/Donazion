@@ -1,25 +1,64 @@
+import React from "react";
 import styles from "../page.module.css"
+import { jsonFormat } from "./page";
 
-interface DictFormat {
-  id: number;
-  items: {
-    id: number;
-    name: string;
-    low: number;
-    high: number;
-  }[];
-}
+export default function CategoriesTable(props: {categoriesJSON: jsonFormat[], setCategories:  React.Dispatch<React.SetStateAction<jsonFormat[]>>}) {
+  let json: jsonFormat[] = props.categoriesJSON
 
-export default function CategoriesTable(props: {categoriesAndItemsJSON: {[key: string] : DictFormat}}) {
-  let json: {[key: string] : DictFormat} = props.categoriesAndItemsJSON
-  let keys: string[] = Object.keys(json)
+  function addCategory() {
+    props.setCategories(prev => [
+      ...prev,
+      {
+          name: "",
+          CID: prev.length > 0 ? Math.max(...prev.map(c => c.CID)) + 1 : 1,
+          items: []
+      }
+    ])
+  }
 
-  function SingleCategoryTable(props: {categoryName: string, singleCategoryJSON: DictFormat["items"]}) {
+  function removeCategory(CID: number) {
+    props.setCategories(prev => 
+      prev.filter((category) => category.CID !== CID)
+    )
+  }
+
+  function addItem(CID: number) {
+    let newIID = Math.max(...props.categoriesJSON.map((category) => Math.max(...category.items.map((item) => item.IID))), 0) + 1
+    props.setCategories(prev => 
+      prev.map((category) => category.CID === CID ? 
+        {...category, items: [...category.items,
+          {
+            IID: newIID,
+            name: "",
+            low: -1,
+            high: -1
+          }]
+        }
+        : category
+      )
+    )
+  }
+
+  function removeItem(CID: number, IID: number) {
+    props.setCategories(prev => 
+      prev.map((category) => category.CID === CID ? 
+        {
+          ...category,
+          items: category.items.filter((item) => item.IID !== IID)
+        }
+        : category
+      )
+    ) 
+  }
+
+  function SingleCategoryTable(props: {category: jsonFormat}) {
+    let CID = props.category.CID
+    let items = props.category.items
     return (
       <div style={{marginBottom: "0px", paddingBottom: "0px"}}>
         <div style={{display: "flex", flexDirection: "row"}}>
-          <h2 style={{marginRight: "20px"}}>{props.categoryName}</h2>
-          <button className={`${styles.button} ${styles.temp}`} style={{marginRight: "10px", fontWeight: "bold", height: "22px", width: "22px", borderRadius: "100%", marginTop: "5px"}}>X</button>
+          <input style={{marginRight: "20px"}} placeholder={props.category.name}></input>
+          <button className={`${styles.button} ${styles.temp}`} onClick={() => removeCategory(CID)} style={{marginRight: "10px", fontWeight: "bold", height: "22px", width: "22px", borderRadius: "100%"}}>X</button>
         </div>
         <table>
           <thead>
@@ -30,13 +69,13 @@ export default function CategoriesTable(props: {categoriesAndItemsJSON: {[key: s
             </tr>
           </thead>
           <tbody>
-            {props.singleCategoryJSON.map((item: DictFormat["items"][0]) => <tr key={item.id}>
-              <td key={item.name}><input style={{margin: "0px", width: "150px"}} id={"name," + String(item.id)} placeholder={item.name}></input></td>
-              <td key={item.low}><input style={{margin: "0px", width: "80px"}} id={"low," + String(item.id)} placeholder={String(item.low)}></input></td>
-              <td key={item.high} style={{paddingRight: "0px"}}><input style={{margin: "0px", width: "80px"}} id={"high," + String(item.id)} placeholder={String(item.high)}></input></td>
-              <td key={item.id + 0.1} style={{paddingLeft: "0px"}}><button className={`${styles.button} ${styles.temp}`} style={{marginRight: "10px", fontWeight: "bold", height: "22px", width: "22px", borderRadius: "100%"}}>X</button></td>
+            {items.map((item: jsonFormat["items"][0]) => <tr key={item.IID}>
+              <td key={item.name + item.IID}><input style={{margin: "0px", width: "150px"}} id={"name," + String(item.IID)} placeholder={item.name}></input></td>
+              <td key={item.low + item.IID + 0.1}><input style={{margin: "0px", width: "80px"}} id={"low," + String(item.IID)} placeholder={item.low < 0 ? "" : String(item.low)}></input></td>
+              <td key={item.high + item.IID + 0.2} style={{paddingRight: "0px"}}><input style={{margin: "0px", width: "80px"}} id={"high," + String(item.IID)} placeholder={item.high < 0 ? "" : String(item.high)}></input></td>
+              <td key={item.IID + 0.3} style={{paddingLeft: "0px"}}><button className={`${styles.button} ${styles.temp}`} onClick={() => removeItem(CID, item.IID)} style={{marginRight: "10px", fontWeight: "bold", height: "22px", width: "22px", borderRadius: "100%"}}>X</button>{item.IID}</td>
             </tr>)}
-            <tr><td style={{paddingLeft: "0px"}}><button className={`${styles.button} ${styles.temp}`} style={{marginLeft: "5px", fontWeight: "bold"}}>Add Item</button></td></tr>
+            <tr><td style={{paddingLeft: "0px"}}><button className={`${styles.button} ${styles.temp}`} onClick={() => addItem(CID)} style={{marginLeft: "5px", fontWeight: "bold"}}>Add Item</button></td></tr>
           </tbody>
         </table>
         <br/>
@@ -47,8 +86,8 @@ export default function CategoriesTable(props: {categoriesAndItemsJSON: {[key: s
 
   return (
     <div>
-      {keys.map((key: string) => (<SingleCategoryTable key={key} categoryName={key} singleCategoryJSON={json[key]["items"]}></SingleCategoryTable>))}
-      <button className={`${styles.button} ${styles.temp}`} style={{fontWeight: "bold", fontSize: "13px", position: "relative", bottom: "25px"}}>Add Category</button>
+      {json.map((category: jsonFormat) => (<SingleCategoryTable key={category.CID} category={category}></SingleCategoryTable>))}
+      <button className={`${styles.button} ${styles.temp}`} style={{fontWeight: "bold", fontSize: "13px", position: "relative", bottom: "25px"}} onClick={addCategory}>Add Category</button>
     </div>
   )
 }

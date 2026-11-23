@@ -20,3 +20,12 @@ mockAwsInstance.onPost('/searchDonationCentersByWishlist').reply((config) => {
   }
   return [200, { statusCode: 200, body: JSON.stringify({ donationCenters: centersByItem[iid] ?? [] }) }]
 })
+
+mockAwsInstance.onPost('/listCategoryItems').reply(200, {
+  statusCode: 200,
+  body: JSON.stringify({ items: [
+    { iid: 9002, itemName: 'TEST Blanket', categoryName: 'TEST Clothing' },
+    { iid: 9001, itemName: 'TEST Winter Coat', categoryName: 'TEST Clothing' },
+    { iid: 9003, itemName: 'TEST Coffee Maker', categoryName: 'TEST Appliances' },
+  ] })
+})

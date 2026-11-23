@@ -2,7 +2,7 @@
 import React from 'react'
 import styles from "../page.module.css";
 import Nav from "../page_navigation";
-import { awsInstance, mockAwsInstance } from '../ASW';
+import { awsInstance } from '../AWS';
 
 export default function Home() {
   const [dashData, setDashData] = React.useState<{[key: string]: number}>({})

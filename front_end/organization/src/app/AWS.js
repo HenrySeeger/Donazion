@@ -7,7 +7,19 @@ export const awsInstance = axios.create({
 
 export const mockAwsInstance = new AxiosMockAdapter(awsInstance, { delayResponse: 0 });
 
-mockAwsInstance.restore();   /* Uncomment this line to disable all mock instances */
+mockAwsInstance.restore();   /* Uncomment this line to disable all interceptions by mock instances */
+
+mockAwsInstance.onGet("/orgShowDashboard").reply(200, {
+  numDonationCenters: 24,
+  numItems: 5928,
+  avgItemsPerDonationCenter: 174.35,
+  totalInventoryValue: 212322.86,
+  avgInventoryValuePerDonationCenter: 6224.79,
+  numCategories: 5,
+  numCategoryItems: 53,
+  lowestLow: 1.25,
+  highestHigh: 83.00
+})
 
 mockAwsInstance.onGet("/listDonationCenters").reply(200, [
   {

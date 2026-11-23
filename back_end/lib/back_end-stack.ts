@@ -7,6 +7,7 @@ import * as lambdaNodejs from 'aws-cdk-lib/aws-lambda-nodejs';
 import * as path from 'node:path'
 import * as ec2 from 'aws-cdk-lib/aws-ec2'
 import { Duration } from 'aws-cdk-lib'
+import * as iam from 'aws-cdk-lib/aws-iam'
 
 export class BackEndStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -168,37 +169,71 @@ export class BackEndStack extends cdk.Stack {
 
     // Organization
     // Add a POST method to the '/donazion/loginOrganization' resource
-    const loginOrganization_fn = new lambdaNodejs.NodejsFunction(this, 'loginOrganizationFunction', {
+    const loginOrganization_fn = new lambda.Function(this, 'loginOrganizationFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'loginOrganization.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, 'loginOrganization')),
       vpc: vpc,   // Reference the VPC defined above
       environment: {
-          RDS_USER: process.env.RDS_USER!,
-          RDS_PASSWORD: process.env.RDS_PASSWORD!,
-          RDS_DATABASE: process.env.RDS_DATABASE!,
-          RDS_HOST: process.env.RDS_HOST!
-        },
+          DB_HOST: process.env.DB_HOST!,
+          DB_PORT: process.env.DB_PORT || '3306',
+          DB_USER: process.env.DB_USER!,
+          DB_NAME: process.env.DB_NAME!,
+          DB_CA_PATH: '/var/task/certs/global-bundle.pem'
+      },
       securityGroups: [securityGroup],   // Associate the security group
       timeout: Duration.seconds(3),   // Timeout, adjust as needed
     })
-    loginOrganizationResource.addMethod('POST', new apigw.LambdaIntegration(loginOrganization_fn, integration_parameters), response_parameters)
 
-    const changePassword_fn = new lambdaNodejs.NodejsFunction(this, 'changePasswordFunction', {
+    // Allows loginOrganization to retrieve its database password and JWT secret.
+    loginOrganization_fn.addToRolePolicy(new iam.PolicyStatement({
+        actions: ['ssm:GetParameter'],
+        resources: [
+            `arn:aws:ssm:${this.region}:${this.account}:parameter/donazion/prod/DB_PASSWORD`,
+            `arn:aws:ssm:${this.region}:${this.account}:parameter/donazion/prod/JWT_SECRET`
+        ]
+    }));
+
+    // Uses Lambda proxy integration to preserve authentication HTTP status codes.
+    loginOrganizationResource.addMethod(
+        'POST',
+        new apigw.LambdaIntegration(loginOrganization_fn, {
+            proxy: true
+        })
+    )
+
+    const changePassword_fn = new lambda.Function(this, 'changePasswordFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'changePassword.handler',
       code: lambda.Code.fromAsset(path.join(__dirname, 'changePassword')),
       vpc: vpc,
       environment: {
-          RDS_USER: process.env.RDS_USER!,
-          RDS_PASSWORD: process.env.RDS_PASSWORD!,
-          RDS_DATABASE: process.env.RDS_DATABASE!,
-          RDS_HOST: process.env.RDS_HOST!
-        },
+          DB_HOST: process.env.DB_HOST!,
+          DB_PORT: process.env.DB_PORT || '3306',
+          DB_USER: process.env.DB_USER!,
+          DB_NAME: process.env.DB_NAME!,
+          DB_CA_PATH: '/var/task/certs/global-bundle.pem'
+      },
       securityGroups: [securityGroup],
-      timeout: Duration.seconds(3),
+      timeout: Duration.seconds(15),
     })
-    changePasswordResource.addMethod('POST', new apigw.LambdaIntegration(changePassword_fn, integration_parameters), response_parameters)
+
+    // Allows changePassword to retrieve its database password and JWT secret.
+    changePassword_fn.addToRolePolicy(new iam.PolicyStatement({
+        actions: ['ssm:GetParameter'],
+        resources: [
+            `arn:aws:ssm:${this.region}:${this.account}:parameter/donazion/prod/DB_PASSWORD`,
+            `arn:aws:ssm:${this.region}:${this.account}:parameter/donazion/prod/JWT_SECRET`
+        ]
+    }));
+
+    // Uses Lambda proxy integration to preserve authentication HTTP status codes.
+    changePasswordResource.addMethod(
+        'POST',
+        new apigw.LambdaIntegration(changePassword_fn, {
+            proxy: true
+        })
+    )
 
     const orgShowDashboard_fn = new lambdaNodejs.NodejsFunction(this, 'orgShowDashboardFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
@@ -212,9 +247,9 @@ export class BackEndStack extends cdk.Stack {
           RDS_HOST: process.env.RDS_HOST!
         },
       securityGroups: [securityGroup],
-      timeout: Duration.seconds(3),
+      timeout: Duration.seconds(15),
     })
-    orgShowDashboardResource.addMethod('POST', new apigw.LambdaIntegration(orgShowDashboard_fn, integration_parameters), response_parameters)
+    orgShowDashboardResource.addMethod('GET', new apigw.LambdaIntegration(orgShowDashboard_fn, integration_parameters), response_parameters)
 
     const addCategory_fn = new lambdaNodejs.NodejsFunction(this, 'addCategoryFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
@@ -310,7 +345,7 @@ export class BackEndStack extends cdk.Stack {
       securityGroups: [securityGroup],
       timeout: Duration.seconds(3),
     })    // Also for Donor
-    listDonationCentersResource.addMethod('POST', new apigw.LambdaIntegration(listDonationCenters_fn, integration_parameters), response_parameters)
+    listDonationCentersResource.addMethod('GET', new apigw.LambdaIntegration(listDonationCenters_fn, integration_parameters), response_parameters)
 
 
     // Donation Center

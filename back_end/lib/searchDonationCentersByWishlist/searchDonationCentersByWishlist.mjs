@@ -4,7 +4,7 @@ const QUERY = `
   SELECT DISTINCT dc.name, dc.address
   FROM wishlist w
   JOIN donation_centers dc ON dc.name = w.donation_center_name
-  WHERE w.IID = ?
+  WHERE w.IID = ? AND dc.is_active = 1
   ORDER BY dc.name`
 
 const queryByWishlist = (pool, wishListItemID) => {

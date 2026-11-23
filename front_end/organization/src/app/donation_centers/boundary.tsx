@@ -50,7 +50,7 @@ export default function DonationCenterPagination(props: {donationCenters: jsonFo
             </tr>
           )}
           {pageNum != Math.ceil(donationCenters.length / pageLen) ? "" : range(pageLen - donationCenters.length % pageLen).map((val: number) => <tr key={val}>
-            <td key={val + 0.1}> </td> {/* This piece is fills the last page so that it has the same number of rows as all previous ones */}
+            <td key={val + 0.1}> </td>{/* This piece is fills the last page so that it has the same number of rows as all previous ones */}
           </tr>
           )}
         </tbody>

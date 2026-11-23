@@ -75,6 +75,13 @@ let test_input: jsonFormat[] = [
   }
 ]
 
+export interface deletionsFormat {
+  level: "category" | "item",
+  ID: number
+}
+
+let deletions: deletionsFormat[] = []
+
 export default function Home() {
   const [categories, setCategories] = React.useState(test_input)
 
@@ -83,10 +90,9 @@ export default function Home() {
   }
 
   function clickCancel() {
-    console.log("Clean up1")
-    timeout(100000)
-    console.log("Clean up2")
+    timeout(1000)
     setCategories(test_input)
+    deletions = []
   }
 
   return (
@@ -101,6 +107,6 @@ export default function Home() {
       <Link href="/item_categories" className={styles.button} onClick={clickCancel} style={{position: "fixed", top: "100px", right: "10px", zIndex: 0}}>Cancel</Link>
       <h1 style={{marginTop: "20px"}}>Categories and Items</h1>
       <p style={{marginBottom: "30px"}}>(Not Currently Connected to the Back End)</p>
-      <CategoriesTable categoriesJSON={categories} setCategories={setCategories}></CategoriesTable>
+      <CategoriesTable categoriesJSON={categories} setCategories={setCategories} deletions={deletions}></CategoriesTable>
     </div>
 )}

@@ -78,7 +78,6 @@ let test_input: jsonFormat[] = [
 
 export default function Home() {
   return (
-    console.log("Landing page"),
     <div className={styles.page}>
       <Nav current_page="item categories"/>
       <Link href="/edit_item_categories" className={styles.button} style={{position: "absolute", top: "60px", right: "10px", zIndex: 0}}>Edit Categories and Items</Link>

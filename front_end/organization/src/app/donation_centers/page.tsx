@@ -15,8 +15,8 @@ export default function Home() {
   const [donationCentersInfo, setDonationCentersInfo] = React.useState<jsonFormat[]>([])
   
   async function openPage(): Promise<jsonFormat[]> {
-    const response = await awsInstance.get("/listDonationCenters");
-    return response.data;
+    const response = await awsInstance.get("listDonationCenters")
+    return response.data
   }
   
   React.useEffect(() => {

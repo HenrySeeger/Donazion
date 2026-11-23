@@ -2,7 +2,7 @@ import axios from 'axios';
 import AxiosMockAdapter from 'axios-mock-adapter';
 
 export const awsInstance = axios.create({
-  baseURL: 'https://homeupdrc8.execute-api.us-east-2.amazonaws.com/prod/donazion'
+  baseURL: 'https://homeupdrc8.execute-api.us-east-2.amazonaws.com/prod/donazion/'
 });
 
 export const mockAwsInstance = new AxiosMockAdapter(awsInstance, { delayResponse: 0 });

@@ -309,7 +309,7 @@ export class BackEndStack extends cdk.Stack {
       securityGroups: [securityGroup],
       timeout: Duration.seconds(3),
     })    // Also for Donor
-    listDonationCentersResource.addMethod('POST', new apigw.LambdaIntegration(listDonationCenters_fn, integration_parameters), response_parameters)
+    listDonationCentersResource.addMethod('GET', new apigw.LambdaIntegration(listDonationCenters_fn, integration_parameters), response_parameters)
 
 
     // Donation Center

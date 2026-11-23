@@ -2,12 +2,12 @@ import axios from 'axios';
 import AxiosMockAdapter from 'axios-mock-adapter';
 
 export const awsInstance = axios.create({
-  baseURL: 'https://homeupdrc8.execute-api.us-east-2.amazonaws.com/prod/donazion'
+  baseURL: 'https://homeupdrc8.execute-api.us-east-2.amazonaws.com/prod/donazion/'
 });
 
 export const mockAwsInstance = new AxiosMockAdapter(awsInstance, { delayResponse: 0 });
 
-mockAwsInstance.restore();   /* Uncomment this line to disable all mock instances */
+mockAwsInstance.restore();   /* Uncomment this line to disable all interceptions by mock instances */
 
 mockAwsInstance.onGet("/orgShowDashboard").reply(200, {
   numDonationCenters: 24,

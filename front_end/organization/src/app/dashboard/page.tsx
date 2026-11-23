@@ -8,7 +8,7 @@ export default function Home() {
   const [dashData, setDashData] = React.useState<{[key: string]: number}>({})
   
   async function openPage(): Promise<{[key: string]: number}> {
-    const response = await awsInstance.get("/orgShowDashboard");
+    const response = await awsInstance.get("orgShowDashboard");
     return response.data;
   }
   

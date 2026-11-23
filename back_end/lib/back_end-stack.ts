@@ -75,6 +75,7 @@ export class BackEndStack extends cdk.Stack {
     const catalogItemsResource = donazionResource.addResource('catalogItems')
 
     // Donor
+    const listCategoryItemsResource = donazionResource.addResource('listCategoryItems')
     const mapDonationCentersResource = donazionResource.addResource('mapDonationCenters')
     const searchDonationCentersByWishlistResource = donazionResource.addResource('searchDonationCentersByWishlist')
     const prepareBoxResource = donazionResource.addResource('prepareBox')
@@ -523,6 +524,21 @@ export class BackEndStack extends cdk.Stack {
     })
     completeBoxDonationResource.addMethod('POST', new apigw.LambdaIntegration(completeBoxDonation_fn, integration_parameters), response_parameters)
 
+    const listCategoryItems_fn = new lambdaNodejs.NodejsFunction(this, 'listCategoryItemsFunction', {
+      runtime: lambda.Runtime.NODEJS_22_X,
+      handler: 'listCategoryItems.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, 'listCategoryItems')),
+      vpc: vpc,
+      environment: {
+          RDS_USER: process.env.RDS_USER!,
+          RDS_PASSWORD: process.env.RDS_PASSWORD!,
+          RDS_DATABASE: process.env.RDS_DATABASE!,
+          RDS_HOST: process.env.RDS_HOST!
+        },
+      securityGroups: [securityGroup],
+      timeout: Duration.seconds(3),
+    })
+    listCategoryItemsResource.addMethod('POST', new apigw.LambdaIntegration(listCategoryItems_fn, integration_parameters), response_parameters)
     // The code that defines your stack goes here
 
     // example resource

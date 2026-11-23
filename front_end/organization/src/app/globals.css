@@ -6,14 +6,8 @@
   --nav-selected: #c8f5ff;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-
-    --nav-deselected: #000000;
-    --nav-selected: #001957;
-  }
+table {
+  border: 2px solid #000000
 }
 
 th {
@@ -75,5 +69,17 @@ a {
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;
+  }
+
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+
+    --nav-deselected: #000000;
+    --nav-selected: #001957;
+  }
+
+  table {
+    border: 2px solid white
   }
 }

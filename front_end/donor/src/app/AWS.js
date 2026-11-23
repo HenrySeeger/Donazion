@@ -29,3 +29,15 @@ mockAwsInstance.onPost('/listCategoryItems').reply(200, {
     { iid: 9003, itemName: 'TEST Coffee Maker', categoryName: 'TEST Appliances' },
   ] })
 })
+
+const manyCenters = Array.from({ length: 12 }, (_, i) => ({
+  name: `TEST Center ${i + 1}`,
+  address: `${i + 1} Main St, Worcester, MA 01609`,
+  inventoryCount: 0,
+  inventoryValue: 0
+}))
+
+mockAwsInstance.onPost('/listDonationCenters').reply(200, {
+  statusCode: 200,
+  body: JSON.stringify(manyCenters)
+})

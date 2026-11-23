@@ -248,7 +248,7 @@ export class BackEndStack extends cdk.Stack {
       securityGroups: [securityGroup],
       timeout: Duration.seconds(15),
     })
-    orgShowDashboardResource.addMethod('POST', new apigw.LambdaIntegration(orgShowDashboard_fn, integration_parameters), response_parameters)
+    orgShowDashboardResource.addMethod('GET', new apigw.LambdaIntegration(orgShowDashboard_fn, integration_parameters), response_parameters)
 
     const addCategory_fn = new lambdaNodejs.NodejsFunction(this, 'addCategoryFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,

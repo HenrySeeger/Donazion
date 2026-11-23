@@ -38,7 +38,7 @@ export default function DonationCenterPagination(props: {donationCenters: DictFo
 
   return (
     <div>
-      <table style={{border: "2px solid white", fontSize: "20px"}}>
+      <table style={{fontSize: "20px"}}>
         <thead>
           <tr>
             <th style={{backgroundColor: "#333333"}}>Donation Center Name</th>
@@ -61,11 +61,11 @@ export default function DonationCenterPagination(props: {donationCenters: DictFo
       </table>
       <br/>
       <div className={styles.flex} style={{whiteSpace: "pre", textAlign: "center"}}>
-        <button className={`${styles.button} ${styles.temp}`} style={{marginRight: "10px"}} disabled={pageNum == 1} onClick={() => setPageNum(1)}>◀◀ </button>
-        <button className={`${styles.button} ${styles.temp}`} style={{marginRight: "10px"}} disabled={pageNum == 1} onClick={decrementPage}>◀ </button>
+        <button className={`${styles.button} ${styles.pagination_button}`} style={{marginRight: "10px"}} disabled={pageNum == 1} onClick={() => setPageNum(1)}>◀◀ </button>
+        <button className={`${styles.button} ${styles.pagination_button}`} style={{marginRight: "10px"}} disabled={pageNum == 1} onClick={decrementPage}>◀ </button>
         Page {pageNum} of {Math.ceil(donationCenters.length / pageLen)}
-        <button className={`${styles.button} ${styles.temp}`} style={{marginLeft: "10px"}} disabled={pageNum == Math.ceil(donationCenters.length / pageLen)} onClick={incrementPage}> ▶</button>
-        <button className={`${styles.button} ${styles.temp}`} style={{marginLeft: "10px"}} disabled={pageNum == Math.ceil(donationCenters.length / pageLen)} onClick={() => setPageNum(Math.ceil(donationCenters.length / pageLen))}> ▶▶</button>
+        <button className={`${styles.button} ${styles.pagination_button}`} style={{marginLeft: "10px"}} disabled={pageNum == Math.ceil(donationCenters.length / pageLen)} onClick={incrementPage}> ▶</button>
+        <button className={`${styles.button} ${styles.pagination_button}`} style={{marginLeft: "10px"}} disabled={pageNum == Math.ceil(donationCenters.length / pageLen)} onClick={() => setPageNum(Math.ceil(donationCenters.length / pageLen))}> ▶▶</button>
       </div>
     </div>
   )

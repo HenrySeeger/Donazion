@@ -1,69 +1,131 @@
-import Image from "next/image";
+"use client";
+
+import { useState, type FormEvent } from "react";
+import Link from "next/link"
 import styles from "./page.module.css";
 
 export default function Home() {
+  const [message, setMessage] = useState("");
+
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  async function registerDonationCenter(event: FormEvent<HTMLFormElement>) {
+
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+
+    const registration = {
+
+      name: String(form.get("name") ?? "").trim(),
+      streetAddress: String(form.get("streetAddress") ?? "").trim(),
+      latitude: Number(form.get("latitude")),
+      longitude: Number(form.get("longitude")),
+      username: String(form.get("username") ?? "").trim(),
+      password: String(form.get("password") ?? ""),
+
+    };
+
+    if (
+      !registration.name ||
+      !registration.streetAddress ||
+      !registration.username ||
+      !registration.password.trim()
+    ) {
+      setMessage("Fill in all registration fields.");
+      return;
+    }
+
+    // setMessage( `Ready to register ${registration.name}.`)
+
+    const apiURL = process.env.NEXT_PUBLIC_DONAZION_API_URL;
+
+    if (!apiURL) {
+      setMessage("Registraion API URL is missing");
+      return;
+    }
+
+    setMessage("")
+    setIsSubmitting(true);
+
+    try {
+      const response = await fetch(`${apiURL}/registerDonationCenter`, {
+
+        method: "POST", 
+        headers: { "Content-Type": "application/json"},
+        body: JSON.stringify(registration),
+      });
+
+      const result = await response.json().catch(() => null);
+
+      if (!response.ok) {
+        setMessage(result?.error || result?.message || "Registration failed");
+        return;
+      }
+
+      setMessage(result?.message || "API returned an unexpected response");
+    } catch {
+      setMessage("Could not reach registration API");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
   return (
+    
     <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>
-            To get started, edit the{" "}
-            <code className={styles.code}>page.tsx</code> file.
-          </h1>
-          <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
-          </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={14}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+
+      <main  className={styles.main}>
+
+        <form
+    
+          className={styles.intro}
+          onSubmit={registerDonationCenter}
+          onChange={() => setMessage("")}>
+
+          <h1> Register Donation Center </h1>
+
+          <label>
+            Donation center name <br/>
+            <input name="name" autoComplete= "organization" required />
+          </label>
+
+          <label>
+            Street Address <br/>
+            <input name="streetAddress" autoComplete="street-address" required />
+          </label>
+
+          <label>
+            Latitude <br/>
+            <input name="latitude" type="number" step="any" min="-90" max="90" required />
+          </label>
+
+          <label>
+            Longitude <br/>
+            <input name="longitude" type="number" step="any" min="-180" max="180" required />
+          </label>
+
+          <label>
+            Username <br/>
+            <input name="username" autoComplete="username" required />
+          </label>
+
+          <label>
+            Password <br/>
+            <input name="password" type="password" autoComplete="new-password" required />
+          </label>
+
+          <button type="submit" disabled={isSubmitting}> 
+            {isSubmitting ? "Submitting" : "Register"}
+          </button>
+
+          <p role="status">{message}</p>
+          <Link href="/login">Already registered? Log in</Link>
+
+        </form>
+ 
       </main>
+ 
     </div>
   );
+
 }

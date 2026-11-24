@@ -23,21 +23,16 @@ export class BackEndStack extends cdk.Stack {
         mutable: false
     })
 
-    // NOTE: You First have to add RDS_USER and RDS_PASSWORD to 
-    // your environment variables for your account. Same with RDS_DATABASE and RDS_HOST
-    const rdsUser     = process.env.RDS_USER!
-    const rdsPassword = process.env.RDS_PASSWORD!
-    const rdsDatabase = process.env.RDS_DATABASE!
-    const rdsHost     = process.env.RDS_HOST!
 
     // generic default handler for any API function that doesn't get its own Lambda method
     const default_fn = new lambdaNodejs.NodejsFunction(this, 'LambdaDefaultFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'default.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'default')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda-assets', 'preserved', 'LambdaDefaultFunctionA40B1763.zip')),
       vpc: vpc,
       securityGroups: [securityGroup],
-      timeout: Duration.seconds(3),
+        timeout: Duration.seconds(3),
+        memorySize: 128,
     })
 
     const api_endpoint = new apigw.LambdaRestApi(this, `calculatorapi`, {
@@ -76,7 +71,7 @@ export class BackEndStack extends cdk.Stack {
     const catalogItemsResource = donazionResource.addResource('catalogItems')
 
     // Donor
-    const listCategoryItemsResource = donazionResource.addResource('listCategoryItems')
+// Deferred until Iteration 2:     const listCategoryItemsResource = donazionResource.addResource('listCategoryItems')
     const mapDonationCentersResource = donazionResource.addResource('mapDonationCenters')
     const searchDonationCentersByWishlistResource = donazionResource.addResource('searchDonationCentersByWishlist')
     const prepareBoxResource = donazionResource.addResource('prepareBox')
@@ -172,18 +167,20 @@ export class BackEndStack extends cdk.Stack {
     const loginOrganization_fn = new lambda.Function(this, 'loginOrganizationFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'loginOrganization.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'loginOrganization')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda-assets', 'loginOrganization')),
       vpc: vpc,   // Reference the VPC defined above
-      environment: {
-          DB_HOST: process.env.DB_HOST!,
-          DB_PORT: process.env.DB_PORT || '3306',
-          DB_USER: process.env.DB_USER!,
-          DB_NAME: process.env.DB_NAME!,
-          DB_CA_PATH: '/var/task/certs/global-bundle.pem'
-      },
+
       securityGroups: [securityGroup],   // Associate the security group
-      timeout: Duration.seconds(15),   // Timeout, adjust as needed
-      memorySize: 256,
+   // Timeout, adjust as needed,
+        timeout: Duration.seconds(15),
+        memorySize: 256,
+        environment: {
+            DB_HOST: process.env.DB_HOST!,
+            DB_PORT: process.env.DB_PORT!,
+            DB_USER: process.env.DB_USER!,
+            DB_NAME: process.env.DB_NAME!,
+            DB_CA_PATH: '/var/task/certs/global-bundle.pem',
+        },
     })
 
     // Allows loginOrganization to retrieve its database password and JWT secret.
@@ -206,18 +203,19 @@ export class BackEndStack extends cdk.Stack {
     const changePassword_fn = new lambda.Function(this, 'changePasswordFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'changePassword.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'changePassword')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda-assets', 'changePassword')),
       vpc: vpc,
-      environment: {
-          DB_HOST: process.env.DB_HOST!,
-          DB_PORT: process.env.DB_PORT || '3306',
-          DB_USER: process.env.DB_USER!,
-          DB_NAME: process.env.DB_NAME!,
-          DB_CA_PATH: '/var/task/certs/global-bundle.pem'
-      },
+
       securityGroups: [securityGroup],
-      timeout: Duration.seconds(15),
-      memorySize: 256,
+        timeout: Duration.seconds(15),
+        memorySize: 256,
+        environment: {
+            DB_HOST: process.env.DB_HOST!,
+            DB_PORT: process.env.DB_PORT!,
+            DB_USER: process.env.DB_USER!,
+            DB_NAME: process.env.DB_NAME!,
+            DB_CA_PATH: '/var/task/certs/global-bundle.pem',
+        },
     })
 
     // Allows changePassword to retrieve its database password and JWT secret.
@@ -245,18 +243,19 @@ export class BackEndStack extends cdk.Stack {
     const orgShowDashboard_fn = new lambdaNodejs.NodejsFunction(this, 'orgShowDashboardFunction', {
     	runtime: lambda.Runtime.NODEJS_22_X,
     	handler: 'orgShowDashboard.handler',
-    	code: lambda.Code.fromAsset(path.join(__dirname, 'orgShowDashboard')),
+    	code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda-assets', 'orgShowDashboard')),
     	vpc: vpc,
-    	environment: {
-        	DB_HOST: process.env.DB_HOST!,
-        	DB_PORT: process.env.DB_PORT || '3306',
-        	DB_USER: process.env.DB_USER!,
-        	DB_NAME: process.env.DB_NAME!,
-        	DB_CA_PATH: '/var/task/certs/global-bundle.pem'
-    	},
+
     	securityGroups: [securityGroup],
-    	timeout: Duration.seconds(15),
-    	memorySize: 128,
+        timeout: Duration.seconds(15),
+        memorySize: 128,
+        environment: {
+            DB_HOST: process.env.DB_HOST!,
+            DB_PORT: process.env.DB_PORT!,
+            DB_USER: process.env.DB_USER!,
+            DB_NAME: process.env.DB_NAME!,
+            DB_CA_PATH: '/var/task/certs/global-bundle.pem',
+        },
 	})
 	// Allows the dashboard to retrieve the database password and JWT secret.
 	orgShowDashboard_fn.addToRolePolicy(new iam.PolicyStatement({
@@ -281,102 +280,139 @@ export class BackEndStack extends cdk.Stack {
     const addCategory_fn = new lambdaNodejs.NodejsFunction(this, 'addCategoryFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'addCategory.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'addCategory')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda-assets', 'preserved', 'addCategoryFunction644B2020.zip')),
       vpc: vpc,
-      environment: {
-          RDS_USER: process.env.RDS_USER!,
-          RDS_PASSWORD: process.env.RDS_PASSWORD!,
-          RDS_DATABASE: process.env.RDS_DATABASE!,
-          RDS_HOST: process.env.RDS_HOST!
-        },
+
       securityGroups: [securityGroup],
-      timeout: Duration.seconds(25),
-      memorySize: 256,
+        timeout: Duration.seconds(25),
+        memorySize: 256,
+        environment: {
+            DB_HOST: process.env.DB_HOST!,
+            DB_PORT: process.env.DB_PORT!,
+            DB_USER: process.env.DB_USER!,
+            DB_NAME: process.env.DB_NAME!,
+            DB_CA_PATH: '/var/task/certs/global-bundle.pem',
+        },
     })
+    addCategory_fn.addToRolePolicy(new iam.PolicyStatement({
+        actions: ['ssm:GetParameter'],
+        resources: [
+            'arn:aws:ssm:us-east-2:971805627045:parameter/donazion/prod/DB_PASSWORD',
+            'arn:aws:ssm:us-east-2:971805627045:parameter/donazion/prod/JWT_SECRET'
+        ]
+    }));
+
     addCategoryResource.addMethod('POST', new apigw.LambdaIntegration(addCategory_fn, integration_parameters), response_parameters)
 
     const removeCategory_fn = new lambdaNodejs.NodejsFunction(this, 'removeCategoryFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'removeCategory.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'removeCategory')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda-assets', 'preserved', 'removeCategoryFunction78C65F0F.zip')),
       vpc: vpc,
-      environment: {
-          RDS_USER: process.env.RDS_USER!,
-          RDS_PASSWORD: process.env.RDS_PASSWORD!,
-          RDS_DATABASE: process.env.RDS_DATABASE!,
-          RDS_HOST: process.env.RDS_HOST!
-        },
+
       securityGroups: [securityGroup],
-      timeout: Duration.seconds(25),
-      memorySize: 256,
+        timeout: Duration.seconds(25),
+        memorySize: 256,
+        environment: {
+            DB_HOST: process.env.DB_HOST!,
+            DB_PORT: process.env.DB_PORT!,
+            DB_USER: process.env.DB_USER!,
+            DB_NAME: process.env.DB_NAME!,
+            DB_CA_PATH: '/var/task/certs/global-bundle.pem',
+        },
     })
+    removeCategory_fn.addToRolePolicy(new iam.PolicyStatement({
+        actions: ['ssm:GetParameter'],
+        resources: [
+            'arn:aws:ssm:us-east-2:971805627045:parameter/donazion/prod/DB_PASSWORD',
+            'arn:aws:ssm:us-east-2:971805627045:parameter/donazion/prod/JWT_SECRET'
+        ]
+    }));
+
     removeCategoryResource.addMethod('POST', new apigw.LambdaIntegration(removeCategory_fn, integration_parameters), response_parameters)
 
     const uploadCategoryItems_fn = new lambdaNodejs.NodejsFunction(this, 'uploadCategoryItemsFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'uploadCategoryItems.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'uploadCategoryItems')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda-assets', 'preserved', 'uploadCategoryItemsFunction6240E45F.zip')),
       vpc: vpc,
-      environment: {
-          RDS_USER: process.env.RDS_USER!,
-          RDS_PASSWORD: process.env.RDS_PASSWORD!,
-          RDS_DATABASE: process.env.RDS_DATABASE!,
-          RDS_HOST: process.env.RDS_HOST!
-        },
+
       securityGroups: [securityGroup],
-      timeout: Duration.seconds(3),
+        timeout: Duration.seconds(3),
+        memorySize: 128,
     })
     uploadCategoryItemsResource.addMethod('POST', new apigw.LambdaIntegration(uploadCategoryItems_fn, integration_parameters), response_parameters)
 
     const removeCategoryItem_fn = new lambdaNodejs.NodejsFunction(this, 'removeCategoryItemFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'removeCategoryItem.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'removeCategoryItem')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda-assets', 'preserved', 'removeCategoryItemFunction35B27EC2.zip')),
       vpc: vpc,
-      environment: {
-          RDS_USER: process.env.RDS_USER!,
-          RDS_PASSWORD: process.env.RDS_PASSWORD!,
-          RDS_DATABASE: process.env.RDS_DATABASE!,
-          RDS_HOST: process.env.RDS_HOST!
-        },
+
       securityGroups: [securityGroup],
-      timeout: Duration.seconds(25),
-      memorySize: 256,
+        timeout: Duration.seconds(25),
+        memorySize: 256,
+        environment: {
+            DB_HOST: process.env.DB_HOST!,
+            DB_PORT: process.env.DB_PORT!,
+            DB_USER: process.env.DB_USER!,
+            DB_NAME: process.env.DB_NAME!,
+            DB_CA_PATH: '/var/task/certs/global-bundle.pem',
+        },
     })
+    removeCategoryItem_fn.addToRolePolicy(new iam.PolicyStatement({
+        actions: ['ssm:GetParameter'],
+        resources: [
+            'arn:aws:ssm:us-east-2:971805627045:parameter/donazion/prod/DB_PASSWORD',
+            'arn:aws:ssm:us-east-2:971805627045:parameter/donazion/prod/JWT_SECRET'
+        ]
+    }));
+
     removeCategoryItemResource.addMethod('POST', new apigw.LambdaIntegration(removeCategoryItem_fn, integration_parameters), response_parameters)
 
     const editCategoryItem_fn = new lambdaNodejs.NodejsFunction(this, 'editCategoryItemFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'editCategoryItem.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'editCategoryItem')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda-assets', 'preserved', 'editCategoryItemFunction13153CA6.zip')),
       vpc: vpc,
-      environment: {
-          RDS_USER: process.env.RDS_USER!,
-          RDS_PASSWORD: process.env.RDS_PASSWORD!,
-          RDS_DATABASE: process.env.RDS_DATABASE!,
-          RDS_HOST: process.env.RDS_HOST!
-        },
+
       securityGroups: [securityGroup],
-      timeout: Duration.seconds(25),
-      memorySize: 256,
+        timeout: Duration.seconds(25),
+        memorySize: 256,
+        environment: {
+            DB_HOST: process.env.DB_HOST!,
+            DB_PORT: process.env.DB_PORT!,
+            DB_USER: process.env.DB_USER!,
+            DB_NAME: process.env.DB_NAME!,
+            DB_CA_PATH: '/var/task/certs/global-bundle.pem',
+        },
     })
+    editCategoryItem_fn.addToRolePolicy(new iam.PolicyStatement({
+        actions: ['ssm:GetParameter'],
+        resources: [
+            'arn:aws:ssm:us-east-2:971805627045:parameter/donazion/prod/DB_PASSWORD',
+            'arn:aws:ssm:us-east-2:971805627045:parameter/donazion/prod/JWT_SECRET'
+        ]
+    }));
+
     editCategoryItemResource.addMethod('POST', new apigw.LambdaIntegration(editCategoryItem_fn, integration_parameters), response_parameters)
 
     const listDonationCenters_fn = new lambdaNodejs.NodejsFunction(this, 	'listDonationCentersFunction', {
     	runtime: lambda.Runtime.NODEJS_22_X,
     	handler: 'listDonationCenters.handler',
-    	code: lambda.Code.fromAsset(path.join(__dirname, 'listDonationCenters')),
+    	code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda-assets', 'listDonationCenters')),
     	vpc: vpc,
-    	environment: {
-        	DB_HOST: process.env.DB_HOST!,
-        	DB_PORT: process.env.DB_PORT || '3306',
-        	DB_USER: process.env.DB_USER!,
-        	DB_NAME: process.env.DB_NAME!,
-        	DB_CA_PATH: '/var/task/certs/global-bundle.pem'
-    	},
+
     	securityGroups: [securityGroup],
-    	timeout: Duration.seconds(15),
-    	memorySize: 256,
+        timeout: Duration.seconds(15),
+        memorySize: 256,
+        environment: {
+            DB_HOST: process.env.DB_HOST!,
+            DB_PORT: process.env.DB_PORT!,
+            DB_USER: process.env.DB_USER!,
+            DB_NAME: process.env.DB_NAME!,
+            DB_CA_PATH: '/var/task/certs/global-bundle.pem',
+        },
 	})    // Also for Donor
 	// Allows the donation center list to retrieve the database password.
 	listDonationCenters_fn.addToRolePolicy(new iam.PolicyStatement({
@@ -399,18 +435,19 @@ export class BackEndStack extends cdk.Stack {
     const registerDonationCenter_fn = new lambdaNodejs.NodejsFunction(this, 	'registerDonationCenterFunction', {
     	runtime: lambda.Runtime.NODEJS_22_X,
     	handler: 'registerDonationCenter.handler',
-    	code: lambda.Code.fromAsset(path.join(__dirname, 'registerDonationCenter')),
+    	code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda-assets', 'registerDonationCenter')),
     	vpc: vpc,
-    	environment: {
-        	DB_HOST: process.env.DB_HOST!,
-        	DB_PORT: process.env.DB_PORT || '3306',
-        	DB_USER: process.env.DB_USER!,
-        	DB_NAME: process.env.DB_NAME!,
-        	DB_CA_PATH: '/var/task/certs/global-bundle.pem'
-    	},
+
     	securityGroups: [securityGroup],
-    	timeout: Duration.seconds(15),
-    	memorySize: 256,
+        timeout: Duration.seconds(15),
+        memorySize: 256,
+        environment: {
+            DB_HOST: process.env.DB_HOST!,
+            DB_PORT: process.env.DB_PORT!,
+            DB_USER: process.env.DB_USER!,
+            DB_NAME: process.env.DB_NAME!,
+            DB_CA_PATH: '/var/task/certs/global-bundle.pem',
+        },
 	})
 	// Allows registration to retrieve the database password.
 	registerDonationCenter_fn.addToRolePolicy(new iam.PolicyStatement({
@@ -424,18 +461,19 @@ export class BackEndStack extends cdk.Stack {
     const loginDonationCenter_fn = new lambdaNodejs.NodejsFunction(this, 	'loginDonationCenterFunction', {
     	runtime: lambda.Runtime.NODEJS_22_X,
     	handler: 'loginDonationCenter.handler',
-    	code: lambda.Code.fromAsset(path.join(__dirname, 'loginDonationCenter')),
+    	code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda-assets', 'loginDonationCenter')),
     vpc: vpc,
-    	environment: {
-        	DB_HOST: process.env.DB_HOST!,
-        	DB_PORT: process.env.DB_PORT || '3306',
-        	DB_USER: process.env.DB_USER!,
-        	DB_NAME: process.env.DB_NAME!,
-        	DB_CA_PATH: '/var/task/certs/global-bundle.pem'
-    	},
+
     	securityGroups: [securityGroup],
-    	timeout: Duration.seconds(15),
-    	memorySize: 256,
+        timeout: Duration.seconds(15),
+        memorySize: 256,
+        environment: {
+            DB_HOST: process.env.DB_HOST!,
+            DB_PORT: process.env.DB_PORT!,
+            DB_USER: process.env.DB_USER!,
+            DB_NAME: process.env.DB_NAME!,
+            DB_CA_PATH: '/var/task/certs/global-bundle.pem',
+        },
 	})
 	// Allows donation center login to retrieve the database password and JWT secret.
 	loginDonationCenter_fn.addToRolePolicy(new iam.PolicyStatement({
@@ -450,113 +488,99 @@ export class BackEndStack extends cdk.Stack {
     const removeDonationCenter_fn = new lambdaNodejs.NodejsFunction(this, 'removeDonationCenterFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'removeDonationCenter.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'removeDonationCenter')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda-assets', 'preserved', 'removeDonationCenterFunction5BA7F2FE.zip')),
       vpc: vpc,
-      environment: {
-          RDS_USER: process.env.RDS_USER!,
-          RDS_PASSWORD: process.env.RDS_PASSWORD!,
-          RDS_DATABASE: process.env.RDS_DATABASE!,
-          RDS_HOST: process.env.RDS_HOST!
-        },
+
       securityGroups: [securityGroup],
-      timeout: Duration.seconds(3),
+        timeout: Duration.seconds(3),
+        memorySize: 128,
     })
     removeDonationCenterResource.addMethod('POST', new apigw.LambdaIntegration(removeDonationCenter_fn, integration_parameters), response_parameters)
 
     const dcShowDashboard_fn = new lambdaNodejs.NodejsFunction(this, 'dcShowDashboardFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'dcShowDashboard.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'dcShowDashboard')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda-assets', 'preserved', 'dcShowDashboardFunction640DEE57.zip')),
       vpc: vpc,
-      environment: {
-          RDS_USER: process.env.RDS_USER!,
-          RDS_PASSWORD: process.env.RDS_PASSWORD!,
-          RDS_DATABASE: process.env.RDS_DATABASE!,
-          RDS_HOST: process.env.RDS_HOST!
-        },
+
       securityGroups: [securityGroup],
-      timeout: Duration.seconds(3),
+        timeout: Duration.seconds(3),
+        memorySize: 128,
     })
     dcShowDashboardResource.addMethod('GET', new apigw.LambdaIntegration(dcShowDashboard_fn, integration_parameters), response_parameters)
 
     const listInventory_fn = new lambdaNodejs.NodejsFunction(this, 'listInventoryFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'listInventory.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'listInventory')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda-assets', 'preserved', 'listInventoryFunctionCE9D9001.zip')),
       vpc: vpc,
-      environment: {
-          RDS_USER: process.env.RDS_USER!,
-          RDS_PASSWORD: process.env.RDS_PASSWORD!,
-          RDS_DATABASE: process.env.RDS_DATABASE!,
-          RDS_HOST: process.env.RDS_HOST!
-        },
+
       securityGroups: [securityGroup],
-      timeout: Duration.seconds(3),
+        timeout: Duration.seconds(3),
+        memorySize: 128,
     })
     listInventoryResource.addMethod('GET', new apigw.LambdaIntegration(listInventory_fn, integration_parameters), response_parameters)
 
     const wishlist_fn = new lambdaNodejs.NodejsFunction(this, 'wishlistFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'wishlist.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'wishlist')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda-assets', 'preserved', 'wishlistFunctionE31282DD.zip')),
       vpc: vpc,
-      environment: {
-          RDS_USER: process.env.RDS_USER!,
-          RDS_PASSWORD: process.env.RDS_PASSWORD!,
-          RDS_DATABASE: process.env.RDS_DATABASE!,
-          RDS_HOST: process.env.RDS_HOST!
-        },
+
       securityGroups: [securityGroup],
-      timeout: Duration.seconds(3),
+        timeout: Duration.seconds(3),
+        memorySize: 128,
     })
     wishlistResource.addMethod('GET', new apigw.LambdaIntegration(wishlist_fn, integration_parameters), response_parameters)
 
     const addWishlistItem_fn = new lambdaNodejs.NodejsFunction(this, 'addWishlistItemFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'addWishlistItem.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'addWishlistItem')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda-assets', 'preserved', 'addWishlistItemFunctionF2F5AECE.zip')),
       vpc: vpc,
-      environment: {
-          RDS_USER: process.env.RDS_USER!,
-          RDS_PASSWORD: process.env.RDS_PASSWORD!,
-          RDS_DATABASE: process.env.RDS_DATABASE!,
-          RDS_HOST: process.env.RDS_HOST!
-        },
+
       securityGroups: [securityGroup],
-      timeout: Duration.seconds(3),
+        timeout: Duration.seconds(3),
+        memorySize: 128,
     })
     addWishlistItemResource.addMethod('POST', new apigw.LambdaIntegration(addWishlistItem_fn, integration_parameters), response_parameters)
 
     const removeWishlistItem_fn = new lambdaNodejs.NodejsFunction(this, 'removeWishlistItemFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'removeWishlistItem.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'removeWishlistItem')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda-assets', 'preserved', 'removeWishlistItemFunction5E79255E.zip')),
       vpc: vpc,
-      environment: {
-          RDS_USER: process.env.RDS_USER!,
-          RDS_PASSWORD: process.env.RDS_PASSWORD!,
-          RDS_DATABASE: process.env.RDS_DATABASE!,
-          RDS_HOST: process.env.RDS_HOST!
-        },
+
       securityGroups: [securityGroup],
-      timeout: Duration.seconds(3),
+        timeout: Duration.seconds(3),
+        memorySize: 128,
     })
     removeWishlistItemResource.addMethod('POST', new apigw.LambdaIntegration(removeWishlistItem_fn, integration_parameters), response_parameters)
 
     const catalogItems_fn = new lambdaNodejs.NodejsFunction(this, 'catalogItemsFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
-      handler: 'catalogItems.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'catalogItems')),
+      handler: 'listCategoryItems.handler',
+      code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda-assets', 'preserved', 'catalogItemsFunction6B2A5818.zip')),
       vpc: vpc,
-      environment: {
-          RDS_USER: process.env.RDS_USER!,
-          RDS_PASSWORD: process.env.RDS_PASSWORD!,
-          RDS_DATABASE: process.env.RDS_DATABASE!,
-          RDS_HOST: process.env.RDS_HOST!
-        },
+
       securityGroups: [securityGroup],
-      timeout: Duration.seconds(3),
+        timeout: Duration.seconds(3),
+        memorySize: 128,
+        environment: {
+            DB_HOST: process.env.DB_HOST!,
+            DB_PORT: process.env.DB_PORT!,
+            DB_USER: process.env.DB_USER!,
+            DB_NAME: process.env.DB_NAME!,
+            DB_CA_PATH: '/var/task/certs/global-bundle.pem',
+        },
     })
+    catalogItems_fn.addToRolePolicy(new iam.PolicyStatement({
+        actions: ['ssm:GetParameter'],
+        resources: [
+            'arn:aws:ssm:us-east-2:971805627045:parameter/donazion/prod/DB_PASSWORD'
+        ]
+    }));
+
     catalogItemsResource.addMethod('POST', new apigw.LambdaIntegration(catalogItems_fn, integration_parameters), response_parameters)
 
 
@@ -564,18 +588,18 @@ export class BackEndStack extends cdk.Stack {
     const mapDonationCenters_fn = new lambdaNodejs.NodejsFunction(this, 'mapDonationCentersFunction', 	{
     	runtime: lambda.Runtime.NODEJS_22_X,
     	handler: 'mapDonationCenters.handler',
-    	code: lambda.Code.fromAsset(path.join(__dirname, 'mapDonationCenters')),
+    	code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda-assets', 'mapDonationCenters')),
     	vpc: vpc,
-    	environment: {
-        	DB_HOST: process.env.DB_HOST!,
-        	DB_PORT: process.env.DB_PORT || '3306',
-        	DB_USER: process.env.DB_USER!,
-        	DB_NAME: process.env.DB_NAME!,
-        	DB_CA_PATH: '/var/task/certs/global-bundle.pem'
-    	},
+
     	securityGroups: [securityGroup],
-    	timeout: Duration.seconds(15),
-    	memorySize: 256,
+        timeout: Duration.seconds(15),
+        memorySize: 256,
+        environment: {
+            DB_HOST: process.env.DB_HOST!,
+            DB_PORT: process.env.DB_PORT!,
+            DB_USER: process.env.DB_USER!,
+            DB_NAME: process.env.DB_NAME!,
+        },
 	})
 	// Allows the donation center map to retrieve the database password.
 	mapDonationCenters_fn.addToRolePolicy(new iam.PolicyStatement({
@@ -589,51 +613,54 @@ export class BackEndStack extends cdk.Stack {
     const searchDonationCentersByWishlist_fn = new lambdaNodejs.NodejsFunction(this, 'searchDonationCentersByWishlistFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'searchDonationCentersByWishlist.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'searchDonationCentersByWishlist')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda-assets', 'preserved', 'searchDonationCentersByWishlistFunctionCF0E2C5F.zip')),
       vpc: vpc,
-      environment: {
-          RDS_USER: process.env.RDS_USER!,
-          RDS_PASSWORD: process.env.RDS_PASSWORD!,
-          RDS_DATABASE: process.env.RDS_DATABASE!,
-          RDS_HOST: process.env.RDS_HOST!
-        },
+
       securityGroups: [securityGroup],
-      timeout: Duration.seconds(3),
+        timeout: Duration.seconds(3),
+        memorySize: 128,
+        environment: {
+            DB_HOST: process.env.DB_HOST!,
+            DB_PORT: process.env.DB_PORT!,
+            DB_USER: process.env.DB_USER!,
+            DB_NAME: process.env.DB_NAME!,
+            DB_CA_PATH: '/var/task/certs/global-bundle.pem',
+        },
     })
+    searchDonationCentersByWishlist_fn.addToRolePolicy(new iam.PolicyStatement({
+        actions: ['ssm:GetParameter'],
+        resources: [
+            'arn:aws:ssm:us-east-2:971805627045:parameter/donazion/prod/DB_PASSWORD'
+        ]
+    }));
+
     searchDonationCentersByWishlistResource.addMethod('POST', new apigw.LambdaIntegration(searchDonationCentersByWishlist_fn, integration_parameters), response_parameters)
 
     const prepareBox_fn = new lambdaNodejs.NodejsFunction(this, 'prepareBoxFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'prepareBox.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'prepareBox')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda-assets', 'preserved', 'prepareBoxFunctionD1FDEAD4.zip')),
       vpc: vpc,
-      environment: {
-          RDS_USER: process.env.RDS_USER!,
-          RDS_PASSWORD: process.env.RDS_PASSWORD!,
-          RDS_DATABASE: process.env.RDS_DATABASE!,
-          RDS_HOST: process.env.RDS_HOST!
-        },
+
       securityGroups: [securityGroup],
-      timeout: Duration.seconds(3),
+        timeout: Duration.seconds(3),
+        memorySize: 128,
     })
     prepareBoxResource.addMethod('POST', new apigw.LambdaIntegration(prepareBox_fn, integration_parameters), response_parameters)
 
     const completeBoxDonation_fn = new lambdaNodejs.NodejsFunction(this, 'completeBoxDonationFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'completeBoxDonation.handler',
-      code: lambda.Code.fromAsset(path.join(__dirname, 'completeBoxDonation')),
+      code: lambda.Code.fromAsset(path.join(__dirname, '..', 'lambda-assets', 'preserved', 'completeBoxDonationFunction24E5FEAD.zip')),
       vpc: vpc,
-      environment: {
-          RDS_USER: process.env.RDS_USER!,
-          RDS_PASSWORD: process.env.RDS_PASSWORD!,
-          RDS_DATABASE: process.env.RDS_DATABASE!,
-          RDS_HOST: process.env.RDS_HOST!
-        },
+
       securityGroups: [securityGroup],
-      timeout: Duration.seconds(3),
+        timeout: Duration.seconds(3),
+        memorySize: 128,
     })
     completeBoxDonationResource.addMethod('POST', new apigw.LambdaIntegration(completeBoxDonation_fn, integration_parameters), response_parameters)
 
+/* Deferred until Iteration 2
     const listCategoryItems_fn = new lambdaNodejs.NodejsFunction(this, 'listCategoryItemsFunction', {
       runtime: lambda.Runtime.NODEJS_22_X,
       handler: 'listCategoryItems.handler',
@@ -649,6 +676,7 @@ export class BackEndStack extends cdk.Stack {
       timeout: Duration.seconds(3),
     })
     listCategoryItemsResource.addMethod('POST', new apigw.LambdaIntegration(listCategoryItems_fn, integration_parameters), response_parameters)
+*/
     // The code that defines your stack goes here
 
     // example resource

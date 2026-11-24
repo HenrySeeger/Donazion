@@ -1,0 +1,130 @@
+[
+    {
+        "LogicalId":  "LambdaDefaultFunctionA40B1763",
+        "FunctionName":  "BackEndStack-LambdaDefaultFunctionA40B1763-eUr7kLLC7E9d",
+        "Handler":  "default.handler",
+        "CodeSha256":  "Ery6aZD3XgPqPXEoayLdlNDWct/nVyJTfF3JJz6tExU=",
+        "File":  "LambdaDefaultFunctionA40B1763.zip",
+        "S3Key":  "donazion/preserved-lambdas/12bcba6990f75e03ea3d71286b22dd94d0d672dfe75722537c5dc9273ead1315/LambdaDefaultFunctionA40B1763.zip"
+    },
+    {
+        "LogicalId":  "addCategoryFunction644B2020",
+        "FunctionName":  "BackEndStack-addCategoryFunction644B2020-ndRY6iiOkLd6",
+        "Handler":  "addCategory.handler",
+        "CodeSha256":  "LpiUh7WOy4jummTw24A5xYlrXtXdC3s9qij+RVgnHZs=",
+        "File":  "addCategoryFunction644B2020.zip",
+        "S3Key":  "donazion/preserved-lambdas/2e989487b58ecb88ee9a64f0db8039c5896b5ed5dd0b7b3daa28fe4558271d9b/addCategoryFunction644B2020.zip"
+    },
+    {
+        "LogicalId":  "addWishlistItemFunctionF2F5AECE",
+        "FunctionName":  "BackEndStack-addWishlistItemFunctionF2F5AECE-DXzEBnjsIMm2",
+        "Handler":  "addWishlistItem.handler",
+        "CodeSha256":  "UdVo+Eh5zPSpCT9lOTSOmDYqbo3wwXYj6gm6UWFxVSE=",
+        "File":  "addWishlistItemFunctionF2F5AECE.zip",
+        "S3Key":  "donazion/preserved-lambdas/51d568f84879ccf4a9093f6539348e98362a6e8df0c17623ea09ba5161715521/addWishlistItemFunctionF2F5AECE.zip"
+    },
+    {
+        "LogicalId":  "catalogItemsFunction6B2A5818",
+        "FunctionName":  "BackEndStack-catalogItemsFunction6B2A5818-bumnkaFAiYjR",
+        "Handler":  "listCategoryItems.handler",
+        "CodeSha256":  "nu2eWMG2nrDFOebEqILx4GlE2PHqF1MNzmcNTFNz2qU=",
+        "File":  "catalogItemsFunction6B2A5818.zip",
+        "S3Key":  "donazion/preserved-lambdas/9eed9e58c1b69eb0c539e6c4a882f1e06944d8f1ea17530dce670d4c5373daa5/catalogItemsFunction6B2A5818.zip"
+    },
+    {
+        "LogicalId":  "completeBoxDonationFunction24E5FEAD",
+        "FunctionName":  "BackEndStack-completeBoxDonationFunction24E5FEAD-NSDP5TuuusQt",
+        "Handler":  "completeBoxDonation.handler",
+        "CodeSha256":  "NaqP0m2hps1nLoVFK9foElgBcEnwnkTohFoCwFwWUbs=",
+        "File":  "completeBoxDonationFunction24E5FEAD.zip",
+        "S3Key":  "donazion/preserved-lambdas/35aa8fd26da1a6cd672e85452bd7e81258017049f09e44e8845a02c05c1651bb/completeBoxDonationFunction24E5FEAD.zip"
+    },
+    {
+        "LogicalId":  "dcShowDashboardFunction640DEE57",
+        "FunctionName":  "BackEndStack-dcShowDashboardFunction640DEE57-WI2eK5Xxea8B",
+        "Handler":  "dcShowDashboard.handler",
+        "CodeSha256":  "k64djsQ62mG/xH3nuQfEw4nk47ahmD8m72JtzHTlUKs=",
+        "File":  "dcShowDashboardFunction640DEE57.zip",
+        "S3Key":  "donazion/preserved-lambdas/93ae1d8ec43ada61bfc47de7b907c4c389e4e3b6a1983f26ef626dcc74e550ab/dcShowDashboardFunction640DEE57.zip"
+    },
+    {
+        "LogicalId":  "editCategoryItemFunction13153CA6",
+        "FunctionName":  "BackEndStack-editCategoryItemFunction13153CA6-lfCjq6RlUKH9",
+        "Handler":  "editCategoryItem.handler",
+        "CodeSha256":  "mfzdnguu4BLrRCmGslAHcjqz7TgE2fUUhdj6zswMx7U=",
+        "File":  "editCategoryItemFunction13153CA6.zip",
+        "S3Key":  "donazion/preserved-lambdas/99fcdd9e0baee012eb442986b25007723ab3ed3804d9f51485d8facecc0cc7b5/editCategoryItemFunction13153CA6.zip"
+    },
+    {
+        "LogicalId":  "listInventoryFunctionCE9D9001",
+        "FunctionName":  "BackEndStack-listInventoryFunctionCE9D9001-Q5AEvDWcY3eL",
+        "Handler":  "listInventory.handler",
+        "CodeSha256":  "tcqwHXEDOvt3Z/ZjOfYu2boRXH4Ok9N8gzq8NrEHYAQ=",
+        "File":  "listInventoryFunctionCE9D9001.zip",
+        "S3Key":  "donazion/preserved-lambdas/b5cab01d71033afb7767f66339f62ed9ba115c7e0e93d37c833abc36b1076004/listInventoryFunctionCE9D9001.zip"
+    },
+    {
+        "LogicalId":  "prepareBoxFunctionD1FDEAD4",
+        "FunctionName":  "BackEndStack-prepareBoxFunctionD1FDEAD4-4t1LUXCXjoLy",
+        "Handler":  "prepareBox.handler",
+        "CodeSha256":  "dzRp+HWsuWVQbXX9DWwHCpG5X/HKWwOc+c2XKU+uQr8=",
+        "File":  "prepareBoxFunctionD1FDEAD4.zip",
+        "S3Key":  "donazion/preserved-lambdas/773469f875acb965506d75fd0d6c070a91b95ff1ca5b039cf9cd97294fae42bf/prepareBoxFunctionD1FDEAD4.zip"
+    },
+    {
+        "LogicalId":  "removeCategoryFunction78C65F0F",
+        "FunctionName":  "BackEndStack-removeCategoryFunction78C65F0F-meORdQAg6x5V",
+        "Handler":  "removeCategory.handler",
+        "CodeSha256":  "vPl0bL8sChk5KnZysnYjQcAePCngH/PxWgeNIhOYviQ=",
+        "File":  "removeCategoryFunction78C65F0F.zip",
+        "S3Key":  "donazion/preserved-lambdas/bcf9746cbf2c0a19392a7672b2762341c01e3c29e01ff3f15a078d221398be24/removeCategoryFunction78C65F0F.zip"
+    },
+    {
+        "LogicalId":  "removeCategoryItemFunction35B27EC2",
+        "FunctionName":  "BackEndStack-removeCategoryItemFunction35B27EC2-d6hLpCe7VFAz",
+        "Handler":  "removeCategoryItem.handler",
+        "CodeSha256":  "cm4HPwmPbwt925aTC3PplJn55fqejs23Ml5bzbokaTI=",
+        "File":  "removeCategoryItemFunction35B27EC2.zip",
+        "S3Key":  "donazion/preserved-lambdas/726e073f098f6f0b7ddb96930b73e99499f9e5fa9e8ecdb7325e5bcdba246932/removeCategoryItemFunction35B27EC2.zip"
+    },
+    {
+        "LogicalId":  "removeDonationCenterFunction5BA7F2FE",
+        "FunctionName":  "BackEndStack-removeDonationCenterFunction5BA7F2FE-98zDR7TwjdR9",
+        "Handler":  "removeDonationCenter.handler",
+        "CodeSha256":  "aGLg/SLiFuUR2Y/2+tXpBzz4bk3e8skSWCRKKeO9AqI=",
+        "File":  "removeDonationCenterFunction5BA7F2FE.zip",
+        "S3Key":  "donazion/preserved-lambdas/6862e0fd22e216e511d98ff6fad5e9073cf86e4ddef2c91258244a29e3bd02a2/removeDonationCenterFunction5BA7F2FE.zip"
+    },
+    {
+        "LogicalId":  "removeWishlistItemFunction5E79255E",
+        "FunctionName":  "BackEndStack-removeWishlistItemFunction5E79255E-CtKu1FMrLfao",
+        "Handler":  "removeWishlistItem.handler",
+        "CodeSha256":  "JPGvF1fSr0SwsV82XkhyZS/9qg9TqdlvRXBMZLq5rTg=",
+        "File":  "removeWishlistItemFunction5E79255E.zip",
+        "S3Key":  "donazion/preserved-lambdas/24f1af1757d2af44b0b15f365e4872652ffdaa0f53a9d96f45704c64bab9ad38/removeWishlistItemFunction5E79255E.zip"
+    },
+    {
+        "LogicalId":  "searchDonationCentersByWishlistFunctionCF0E2C5F",
+        "FunctionName":  "BackEndStack-searchDonationCentersByWishlistFuncti-9eF7LJe10ijt",
+        "Handler":  "searchDonationCentersByWishlist.handler",
+        "CodeSha256":  "JGcS/brMD2YF9hpXuIeY89qFQZ9CpIN7N+txumjWsjo=",
+        "File":  "searchDonationCentersByWishlistFunctionCF0E2C5F.zip",
+        "S3Key":  "donazion/preserved-lambdas/246712fdbacc0f6605f61a57b88798f3da85419f42a4837b37eb71ba68d6b23a/searchDonationCentersByWishlistFunctionCF0E2C5F.zip"
+    },
+    {
+        "LogicalId":  "uploadCategoryItemsFunction6240E45F",
+        "FunctionName":  "BackEndStack-uploadCategoryItemsFunction6240E45F-c9CkZzTaqTmj",
+        "Handler":  "uploadCategoryItems.handler",
+        "CodeSha256":  "8NKtpkM8x4MIkz7xUKYHAycbGZu1WpFd5VL+0eRq3cA=",
+        "File":  "uploadCategoryItemsFunction6240E45F.zip",
+        "S3Key":  "donazion/preserved-lambdas/f0d2ada6433cc78308933ef150a60703271b199bb55a915de552fed1e46addc0/uploadCategoryItemsFunction6240E45F.zip"
+    },
+    {
+        "LogicalId":  "wishlistFunctionE31282DD",
+        "FunctionName":  "BackEndStack-wishlistFunctionE31282DD-WUGKDScq1348",
+        "Handler":  "wishlist.handler",
+        "CodeSha256":  "Jtqyu5YlaOD/zyJDjGTX2kCgkDNmCERyRSaHL++iyNw=",
+        "File":  "wishlistFunctionE31282DD.zip",
+        "S3Key":  "donazion/preserved-lambdas/26dab2bb962568e0ffcf22438c64d7da40a09033660844724526872fefa2c8dc/wishlistFunctionE31282DD.zip"
+    }
+]

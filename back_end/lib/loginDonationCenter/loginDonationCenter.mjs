@@ -1,30 +1,60 @@
-import mysql from 'mysql2'
+﻿import { getSecret } from "./secrets.mjs"
+import { createHmac } from "node:crypto"
+import { pool } from "./connection.mjs"
 
-var pool = mysql.createPool({
-    host: 	process.env.RDS_HOST,
-    user: 	process.env.RDS_USER,
-    password: process.env.RDS_PASSWORD,
-    database: process.env.RDS_DATABASE
-})
+import bcrypt from 'bcryptjs'
+import jwt from 'jsonwebtoken'
+
 
 export const handler = async (event) => {
-  let result
-  let code
+  const { username, password } = event ?? {}
+
+  if (typeof username !== 'string' || username.trim() === '') {
+    throw new Error('Username is required')
+  }
+
+  if (typeof password !== 'string' || password.trim() === '') {
+    throw new Error('Password is required')
+  }
   
+  if (Array.from(username.trim()).length > 100 || bcrypt.truncates(password)) {
+    throw new Error('Invalid login credentials')
+  }
+
+  let center
+
   try {
     
-    result = ""
-    code = 200 // Can also produce a 400
-  } catch (error) {
-    result = error // May want to include additional text around the given error message
-    code = 400
+    
+    const [rows] = await pool.execute(
+      `SELECT  name, username, password_hash, is_active
+      FROM donation_centers
+      WHERE username = ?`,
+      [username.trim()],)
+    center = rows[0]
+
+  } catch {
+    throw new Error('Could not sign in')
   }
 
-  const response = {
-    statusCode: code,
-    body: JSON.stringify(result)
+  if (!center || !(await bcrypt.compare(password, center.password_hash))) {
+    throw new Error('Invalid login credentials')
+  } 
+
+  if (Number(center.is_active) !== 1) {
+    throw new Error('Donation center registration is inactive')
   }
 
-  pool.end()
-  return response
-} 
+  const secret = createHmac("sha256", await getSecret("/donazion/prod/JWT_SECRET")).update("donazion:donation-center").digest("hex")
+
+  if (!secret || Buffer.byteLength(secret, 'utf8') < 32) {
+    throw new Error('Could not sign in')
+  }
+
+  const token = jwt.sign({}, secret, {algorithm: 'HS256', audience: 'donazion:donation-center',  subject: center.username, expiresIn: '1h', })
+
+  return { name: center.name, token }
+
+}
+
+

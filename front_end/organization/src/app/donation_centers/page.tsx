@@ -1,88 +1,93 @@
+
 'use client'
+
 import React from 'react'
 import styles from "../page.module.css";
 import Nav from "../page_navigation";
 import DonationCenterPagination from "./boundary";
-
-interface DictFormat {
-  donationCenters: {
-    name: string;
-    inventoryCount: number;
-    inventoryValue: number;
-  }[];
-}
-
-let test_input: DictFormat = {
-  "donationCenters" : [
-    {
-      "name" : "Donation Center #1",
-      "inventoryCount" : 1,
-      "inventoryValue" : 10
-    },
-    {
-      "name" : "Donation Center #2",
-      "inventoryCount" : 2,
-      "inventoryValue" : 20
-    },
-    {
-      "name" : "Donation Center #3",
-      "inventoryCount" : 3,
-      "inventoryValue" : 30
-    },
-    {
-      "name" : "Donation Center #4",
-      "inventoryCount" : 4,
-      "inventoryValue" : 40
-    },
-    {
-      "name" : "Donation Center #5",
-      "inventoryCount" : 5,
-      "inventoryValue" : 50
-    },
-    {
-      "name" : "Donation Center #6",
-      "inventoryCount" : 6,
-      "inventoryValue" : 60
-    },
-    {
-      "name" : "Donation Center #7",
-      "inventoryCount" : 7,
-      "inventoryValue" : 70
-    },
-    {
-      "name" : "Donation Center #8",
-      "inventoryCount" : 8,
-      "inventoryValue" : 80
-    },
-    {
-      "name" : "Donation Center #9",
-      "inventoryCount" : 9,
-      "inventoryValue" : 90
-    },
-    {
-      "name" : "Donation Center #10",
-      "inventoryCount" : 10,
-      "inventoryValue" : 100
-    },
-    {
-      "name" : "Donation Center #11",
-      "inventoryCount" : 11,
-      "inventoryValue" : 110
-    },
-    {
-      "name" : "Donation Center #12",
-      "inventoryCount" : 12,
-      "inventoryValue" : 120
-    },
-  ]
-}
+import { awsInstance } from '../AWS';
 
 export default function Home() {
+
+  interface jsonFormat {
+    name: string,
+    inventoryCount: number,
+    inventoryValue: number
+  }
+
+  const [donationCentersInfo, setDonationCentersInfo] =
+    React.useState<jsonFormat[]>([])
+
+  const [error, setError] = React.useState("")
+  const [loading, setLoading] = React.useState(true)
+
+  // Retrieves donation centers from the backend.
+  async function openPage(): Promise<jsonFormat[]> {
+
+    const response = await awsInstance.post(
+      "listDonationCenters",
+      {}
+    )
+
+    // Checks the backend response status.
+    const statusCode =
+      response.data.statusCode ?? response.status
+
+    if (statusCode !== 200) {
+      throw new Error("Unable to retrieve donation centers.")
+    }
+
+    // Parses the API response.
+    const result =
+      typeof response.data.body === "string"
+        ? JSON.parse(response.data.body)
+        : response.data
+
+    if (!Array.isArray(result)) {
+      throw new Error("Invalid donation center data.")
+    }
+
+    return result
+  }
+
+  // Loads donation centers when the page opens.
+  React.useEffect(() => {
+
+    async function loadData() {
+      try {
+        setDonationCentersInfo(await openPage())
+      } catch {
+        setError("Unable to load donation centers.")
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadData()
+
+  }, [])
+
   return (
     <div className={styles.page}>
-      <Nav current_page="donation centers"/>
-      <h1 style={{paddingBottom: "30px"}}>Donation Centers</h1>
 
-      <DonationCenterPagination donationCenters={test_input}></DonationCenterPagination>
+      <Nav current_page="donation centers"/>
+
+      <h1 style={{paddingBottom: "30px"}}>
+        Donation Centers
+      </h1>
+
+      {loading ? (
+        <p>Loading donation centers...</p>
+      ) : error ? (
+        <p style={{color: "red"}}>{error}</p>
+      ) : donationCentersInfo.length === 0 ? (
+        <p>No donation centers found.</p>
+      ) : (
+        <DonationCenterPagination
+          donationCenters={donationCentersInfo}
+        />
+      )}
+
     </div>
-)}
+  )
+}

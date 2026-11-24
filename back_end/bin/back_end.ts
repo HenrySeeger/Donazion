@@ -1,4 +1,11 @@
 #!/usr/bin/env node
+// Prevent deployment with missing database settings.
+for (const key of ['DB_HOST', 'DB_PORT', 'DB_USER', 'DB_NAME']) {
+    if (!process.env[key]?.trim()) {
+        throw new Error(`Missing required environment variable: ${key}`);
+    }
+}
+
 import * as cdk from 'aws-cdk-lib/core';
 import { BackEndStack } from '../lib/back_end-stack';
 

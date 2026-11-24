@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "dependencies": {
     "@aws-sdk/client-ssm": "^3.1172.0",
-    "back_end": "file:../..",
     "bcryptjs": "^3.0.3",
     "jsonwebtoken": "^9.0.3",
     "mysql2": "^3.24.6"

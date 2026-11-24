@@ -1,52 +1,47 @@
-import mysql from 'mysql2'
-
-const getDonationCenterInfo = (pool) => {
-  return new Promise((resolve, reject) => {
-    const query = `SELECT
-                      dc.name,
-                      dc.address,
-                      COUNT(di.IID) AS inventoryCount,
-                      COALESCE(SUM(di.value), 0) AS inventoryValue
-                   FROM donation_centers dc
-                   LEFT JOIN donated_items di
-                      ON di.donation_center_name = dc.name
-                   WHERE dc.is_active = 1
-                   GROUP BY dc.username, dc.name, dc.address
-                   ORDER BY dc.name`
-    pool.query(query, (error, rows) => {
-      if (error) {
-        reject(error)
-      } else {
-        resolve(rows || [])
-      }
-    })
-  })
-}
+﻿import { pool } from './connection.mjs'
 
 export const handler = async (event) => {
-  let result
-  let code
-  const pool = mysql.createPool({
-    host: process.env.RDS_HOST,
-    user: process.env.RDS_USER,
-    password: process.env.RDS_PASSWORD,
-    database: process.env.RDS_DATABASE,
-    decimalNumbers: true
-  })
+    const headers = {
+        "Access-Control-Allow-Origin": "*",
+        "Access-Control-Allow-Headers": "Content-Type,Authorization",
+        "Access-Control-Allow-Methods": "POST,GET,OPTIONS"
+    }
 
-  try {
-    result = await getDonationCenterInfo(pool)
-    code = 200
-  } catch (error) {
-    result = { error: error.message }
-    code = 400
-  }
+    try {
+        // Retrieve each donation center and its inventory totals
+        const [rows] = await pool.execute(`
+            SELECT dc.name, dc.address,
+                COUNT(di.IID) AS inventoryCount,
+                COALESCE(SUM(di.value), 0) AS inventoryValue
+            FROM donation_centers dc
+            LEFT JOIN donated_items di
+                ON dc.name = di.donation_center_name
+            WHERE dc.is_active = 1
+            GROUP BY dc.username, dc.name, dc.address
+            ORDER BY dc.name
+        `)
 
-  const response = {
-    statusCode: code,
-    body: JSON.stringify(result)
-  }
+        const centers = rows.map(row => ({
+            name: row.name,
+            address: row.address,
+            inventoryCount: Number(row.inventoryCount),
+            inventoryValue: Number(row.inventoryValue)
+        }))
 
-  pool.end()
-  return response
+        return {
+            statusCode: 200,
+            headers,
+            body: JSON.stringify(centers)
+        }
+    } catch (error) {
+        console.error("Unable to retrieve donation centers:", error)
+
+        return {
+            statusCode: 500,
+            headers,
+            body: JSON.stringify({
+                message: "Unable to retrieve donation centers."
+            })
+        }
+    }
 }

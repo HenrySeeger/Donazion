@@ -1,8 +1,7 @@
-import sslProfiles from 'aws-ssl-profiles'
+﻿import { pool } from "./connection.mjs"
 import bcrypt from 'bcryptjs'
-import myslq from 'mysql2/promise'
 
-let pool
+
 
 function isBlank(value) {
   return typeof value !== 'string' || value.trim() === ''
@@ -52,13 +51,7 @@ export const handler = async (event) => {
   const centerName = name.trim()
 
   try {
-    pool ??= myslq.createPool({
-      host: process.env.RDS_HOST,
-      user: process.env.RDS_USER,
-      password: process.env.RDS_PASSWORD,
-      database: process.env.RDS_DATABASE,
-      ssl: { ca: sslProfiles.ca, verifyIdentity: true },
-    })
+    
 
     const passwordHash = await bcrypt.hash(password, 10)
 

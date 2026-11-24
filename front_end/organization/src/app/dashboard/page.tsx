@@ -1,23 +1,52 @@
-'use client'
-import React from 'react'
+﻿'use client'
+import React from 'react';
+import { useRouter } from 'next/navigation';
 import styles from "../page.module.css";
 import Nav from "../page_navigation";
 import { awsInstance } from '../AWS';
 
 export default function Home() {
+  const router = useRouter();
   const [dashData, setDashData] = React.useState<{[key: string]: number}>({})
   
   async function openPage(): Promise<{[key: string]: number}> {
-    const response = await awsInstance.get("orgShowDashboard");
-    return response.data;
+    const token = sessionStorage.getItem("organizationToken");
+
+    // Redirects users who are not logged in.
+    if (!token) {
+      router.replace("/");
+      return {};
+    }
+
+    // Sends the authentication token to AWS.
+    const response = await awsInstance.post("orgShowDashboard", {}, {
+      headers: {
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    // Redirects users with invalid or expired tokens.
+    if (response.data.statusCode === 401) {
+      sessionStorage.removeItem("organizationToken");
+      router.replace("/");
+      return {};
+    }
+    if (response.data.statusCode !== 200) {
+      throw new Error("Unable to retrieve dashboard statistics.");
+    }
+    return JSON.parse(response.data.body);
   }
   
   React.useEffect(() => {
     async function loadData() {
-      setDashData(await openPage())
+      try {
+        setDashData(await openPage());
+      } catch (error) {
+        console.error("Dashboard request failed:", error);
+      }
     }
     loadData()
-  }, [])
+  }, [router])
   
   return (
     <div className={styles.page}>
@@ -46,3 +75,5 @@ export default function Home() {
     </div>
   );
 }
+
+

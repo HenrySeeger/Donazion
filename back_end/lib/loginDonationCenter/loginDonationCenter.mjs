@@ -1,9 +1,10 @@
-import sslProfiles from 'aws-ssl-profiles'
-import mysql from 'mysql2/promise'
+﻿import { getSecret } from "./secrets.mjs"
+import { createHmac } from "node:crypto"
+import { pool } from "./connection.mjs"
+
 import bcrypt from 'bcryptjs'
 import jwt from 'jsonwebtoken'
 
-let pool
 
 export const handler = async (event) => {
   const { username, password } = event ?? {}
@@ -24,13 +25,7 @@ export const handler = async (event) => {
 
   try {
     
-    pool ??= mysql.createPool({
-      host: 	process.env.RDS_HOST,
-      user: 	process.env.RDS_USER,
-      password: process.env.RDS_PASSWORD,
-      database: process.env.RDS_DATABASE,
-      ssl: { ca: sslProfiles.ca, verifyIdentity: true },
-    })
+    
     const [rows] = await pool.execute(
       `SELECT  name, username, password_hash, is_active
       FROM donation_centers
@@ -50,7 +45,7 @@ export const handler = async (event) => {
     throw new Error('Donation center registration is inactive')
   }
 
-  const secret = process.env.DONATION_CENTER_JWT_SECRET
+  const secret = createHmac("sha256", await getSecret("/donazion/prod/JWT_SECRET")).update("donazion:donation-center").digest("hex")
 
   if (!secret || Buffer.byteLength(secret, 'utf8') < 32) {
     throw new Error('Could not sign in')
@@ -61,3 +56,5 @@ export const handler = async (event) => {
   return { name: center.name, token }
 
 }
+
+

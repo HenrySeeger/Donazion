@@ -182,7 +182,8 @@ export class BackEndStack extends cdk.Stack {
           DB_CA_PATH: '/var/task/certs/global-bundle.pem'
       },
       securityGroups: [securityGroup],   // Associate the security group
-      timeout: Duration.seconds(3),   // Timeout, adjust as needed
+      timeout: Duration.seconds(15),   // Timeout, adjust as needed
+      memorySize: 256,
     })
 
     // Allows loginOrganization to retrieve its database password and JWT secret.
@@ -216,6 +217,7 @@ export class BackEndStack extends cdk.Stack {
       },
       securityGroups: [securityGroup],
       timeout: Duration.seconds(15),
+      memorySize: 256,
     })
 
     // Allows changePassword to retrieve its database password and JWT secret.
@@ -227,13 +229,18 @@ export class BackEndStack extends cdk.Stack {
         ]
     }));
 
-    // Uses Lambda proxy integration to preserve authentication HTTP status codes.
-    changePasswordResource.addMethod(
-        'POST',
-        new apigw.LambdaIntegration(changePassword_fn, {
-            proxy: true
-        })
-    )
+    // Passes authentication headers and the JSON body to the Lambda.
+    changePasswordResource.addMethod('POST', new apigw.LambdaIntegration(changePassword_fn, {
+    	...integration_parameters,
+    	requestTemplates: {
+        	'application/json': `{
+            	"headers": {
+                	"Authorization": 	"$util.escapeJavaScript($input.params().header.get('Authorization')).replaceAll("\\\\'","'")"
+            	},
+            	"body": "$util.escapeJavaScript($input.body).replaceAll("\\\\'","'")"
+        	}`
+    	}
+	}), response_parameters)
 
     const orgShowDashboard_fn = new lambdaNodejs.NodejsFunction(this, 'orgShowDashboardFunction', {
     	runtime: lambda.Runtime.NODEJS_22_X,
@@ -249,7 +256,7 @@ export class BackEndStack extends cdk.Stack {
     	},
     	securityGroups: [securityGroup],
     	timeout: Duration.seconds(15),
-    	memorySize: 256,
+    	memorySize: 128,
 	})
 	// Allows the dashboard to retrieve the database password and JWT secret.
 	orgShowDashboard_fn.addToRolePolicy(new iam.PolicyStatement({
@@ -283,7 +290,8 @@ export class BackEndStack extends cdk.Stack {
           RDS_HOST: process.env.RDS_HOST!
         },
       securityGroups: [securityGroup],
-      timeout: Duration.seconds(3),
+      timeout: Duration.seconds(25),
+      memorySize: 256,
     })
     addCategoryResource.addMethod('POST', new apigw.LambdaIntegration(addCategory_fn, integration_parameters), response_parameters)
 
@@ -299,7 +307,8 @@ export class BackEndStack extends cdk.Stack {
           RDS_HOST: process.env.RDS_HOST!
         },
       securityGroups: [securityGroup],
-      timeout: Duration.seconds(3),
+      timeout: Duration.seconds(25),
+      memorySize: 256,
     })
     removeCategoryResource.addMethod('POST', new apigw.LambdaIntegration(removeCategory_fn, integration_parameters), response_parameters)
 
@@ -331,7 +340,8 @@ export class BackEndStack extends cdk.Stack {
           RDS_HOST: process.env.RDS_HOST!
         },
       securityGroups: [securityGroup],
-      timeout: Duration.seconds(3),
+      timeout: Duration.seconds(25),
+      memorySize: 256,
     })
     removeCategoryItemResource.addMethod('POST', new apigw.LambdaIntegration(removeCategoryItem_fn, integration_parameters), response_parameters)
 
@@ -347,7 +357,8 @@ export class BackEndStack extends cdk.Stack {
           RDS_HOST: process.env.RDS_HOST!
         },
       securityGroups: [securityGroup],
-      timeout: Duration.seconds(3),
+      timeout: Duration.seconds(25),
+      memorySize: 256,
     })
     editCategoryItemResource.addMethod('POST', new apigw.LambdaIntegration(editCategoryItem_fn, integration_parameters), response_parameters)
 

@@ -1,0 +1,84 @@
+Donazion - Iteration #1
+CS 3733
+Part A: Database Storage Tables
+
+Organizations:
+
+CREATE TABLE `organizations` (
+  `org_id` int NOT NULL,
+  `password_hash` varchar(255) NOT NULL,
+  `token_version` int NOT NULL DEFAULT '0',
+  PRIMARY KEY (`org_id`)
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_0900_ai_ci;
+
+Donation Centers:
+
+CREATE TABLE `donation_centers` (
+  `name` varchar(100) DEFAULT NULL,
+  `address` varchar(100) DEFAULT NULL,
+  `latitude` decimal(9,6) DEFAULT NULL,
+  `longitude` decimal(9,6) DEFAULT NULL,
+  `username` varchar(100) NOT NULL,
+  `password_hash` varchar(255) NOT NULL,
+  `is_active` tinyint(1) NOT NULL DEFAULT '1',
+  UNIQUE KEY `unique_donation_centers_username` (`username`)
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_0900_ai_ci;
+
+  Categories:
+
+  CREATE TABLE `categories` (
+  `CID` decimal(10,0) DEFAULT NULL,
+  `category_name` varchar(100) DEFAULT NULL
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_0900_ai_ci;
+
+  Category Items:
+
+  CREATE TABLE `category_items` (
+  `IID` decimal(10,0) DEFAULT NULL,
+  `CID` decimal(10,0) DEFAULT NULL,
+  `item_name` varchar(100) DEFAULT NULL,
+  `low_value` decimal(10,0) DEFAULT NULL,
+  `high_value` decimal(10,0) DEFAULT NULL
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_0900_ai_ci;
+
+  Donated Items:
+
+  CREATE TABLE `donated_items` (
+  `donation_center_name` varchar(100) DEFAULT NULL,
+  `value` decimal(10,0) DEFAULT NULL,
+  `IID` decimal(10,0) DEFAULT NULL
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_0900_ai_ci;
+
+  Wishlist:
+
+  CREATE TABLE `wishlist` (
+  `donation_center_name` varchar(100) DEFAULT NULL,
+  `IID` decimal(10,0) DEFAULT NULL
+) ENGINE=InnoDB
+  DEFAULT CHARSET=utf8mb4
+  COLLATE=utf8mb4_0900_ai_ci;
+
+  Part B: Working Iteration #1
+
+Repository Link:
+https://github.com/HenrySeeger/Donazion 
+
+Organization:
+https://dbegnrzrio4in.cloudfront.net/
+
+Donation Center:
+https://d3b1inaizrexsg.cloudfront.net/
+
+Donor:
+http://donazion-cs3733-donor-2026.s3-website.us-east-2.amazonaws.com/
+

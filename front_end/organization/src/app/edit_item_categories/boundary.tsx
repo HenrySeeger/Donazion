@@ -178,7 +178,7 @@ export default function CategoriesTable(props: {categoriesJSON: jsonFormat[], se
   return (
     <div>
       {json.map((category: jsonFormat) => (<SingleCategoryTable key={category.CID} category={category} InputChange={InputChange} removeCategory={removeCategory} addItem={addItem} removeItem={removeItem}></SingleCategoryTable>))}
-      <button className={`${styles.button} ${styles.temp}`} style={{fontWeight: "bold", fontSize: "13px", position: "relative", bottom: "25px"}} onClick={addCategory}>Add Category</button>
+      <button className={`${styles.button} ${styles.small_button}`} style={{fontWeight: "bold", fontSize: "13px", position: "relative", bottom: "25px"}} onClick={addCategory}>Add Category</button>
     </div>
   )
 }
@@ -190,7 +190,7 @@ function SingleCategoryTable(props: {category: jsonFormat, InputChange: (event: 
     <div style={{marginBottom: "0px", paddingBottom: "0px"}}>
       <div style={{display: "flex", flexDirection: "row"}}>
         <input style={{marginRight: "20px"}} value={props.category.name} id={"category," + CID} onChange={props.InputChange}></input>
-        <button className={`${styles.button} ${styles.temp}`} onClick={() => props.removeCategory(CID)} style={{marginRight: "10px", fontWeight: "bold", height: "22px", width: "22px", borderRadius: "100%"}}>X</button>{CID}
+        <button className={`${styles.button} ${styles.small_button}`} onClick={() => props.removeCategory(CID)} style={{marginRight: "10px", fontWeight: "bold", height: "22px", width: "22px", borderRadius: "100%"}}>X</button>{CID}
       </div>
       <table>
         <thead>
@@ -205,9 +205,9 @@ function SingleCategoryTable(props: {category: jsonFormat, InputChange: (event: 
             <td key={"name: " + item.IID}><input style={{margin: "0px", width: "150px"}} id={"name," + item.IID} value={item.name} onChange={props.InputChange}></input></td>
             <td key={"low: " + item.IID + 0.1}>$ <input style={{margin: "0px", width: "70px"}} id={"low," + item.IID} value={item.low} onChange={props.InputChange}></input></td>
             <td key={"high: " + item.IID + 0.2} style={{paddingRight: "0px"}}>$ <input style={{margin: "0px", width: "70px"}} id={"high," + item.IID} value={item.high} onChange={props.InputChange}></input></td>
-            <td key={"button: " + item.IID} style={{paddingLeft: "0px"}}><button className={`${styles.button} ${styles.temp}`} onClick={() => props.removeItem(CID, item.IID)} style={{marginRight: "10px", fontWeight: "bold", height: "22px", width: "22px", borderRadius: "100%"}}>X</button>{item.IID}</td>
+            <td key={"button: " + item.IID} style={{paddingLeft: "0px"}}><button className={`${styles.button} ${styles.small_button}`} onClick={() => props.removeItem(CID, item.IID)} style={{marginRight: "10px", fontWeight: "bold", height: "22px", width: "22px", borderRadius: "100%"}}>X</button>{item.IID}</td>
           </tr>)}
-          <tr><td style={{paddingLeft: "0px"}}><button className={`${styles.button} ${styles.temp}`} onClick={() => props.addItem(CID)} style={{marginLeft: "5px", fontWeight: "bold"}}>Add Item</button></td></tr>
+          <tr><td style={{paddingLeft: "0px"}}><button className={`${styles.button} ${styles.small_button}`} onClick={() => props.addItem(CID)} style={{marginLeft: "5px", fontWeight: "bold"}}>Add Item</button></td></tr>
         </tbody>
       </table>
       <br/>

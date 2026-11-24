@@ -65,7 +65,7 @@
   display: "inline-block";
 }
 
-.pagination_button {
+.small_button {
   font-size: 12px;
   color: black;
   border-width: 2px;
@@ -163,7 +163,7 @@
     color: #ffffff
   }
 
-  .pagination_button {
+  .small_button {
     font-size: 12px;
     color: black;
     border-width: 2px;

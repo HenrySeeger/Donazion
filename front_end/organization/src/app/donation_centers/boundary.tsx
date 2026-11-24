@@ -57,11 +57,11 @@ export default function DonationCenterPagination(props: {donationCenters: jsonFo
       </table>
       <br/>
       <div className={styles.flex} style={{whiteSpace: "pre", textAlign: "center"}}>
-        <button className={`${styles.button} ${styles.pagination_button}`} style={{marginRight: "10px"}} disabled={pageNum == 1} onClick={() => setPageNum(1)}>◀◀ </button>
-        <button className={`${styles.button} ${styles.pagination_button}`} style={{marginRight: "10px"}} disabled={pageNum == 1} onClick={decrementPage}>◀ </button>
+        <button className={`${styles.button} ${styles.small_button}`} style={{marginRight: "10px"}} disabled={pageNum == 1} onClick={() => setPageNum(1)}>◀◀ </button>
+        <button className={`${styles.button} ${styles.small_button}`} style={{marginRight: "10px"}} disabled={pageNum == 1} onClick={decrementPage}>◀ </button>
         Page {pageNum} of {Math.ceil(donationCenters.length / pageLen)}
-        <button className={`${styles.button} ${styles.pagination_button}`} style={{marginLeft: "10px"}} disabled={pageNum == Math.ceil(donationCenters.length / pageLen)} onClick={incrementPage}> ▶</button>
-        <button className={`${styles.button} ${styles.pagination_button}`} style={{marginLeft: "10px"}} disabled={pageNum == Math.ceil(donationCenters.length / pageLen)} onClick={() => setPageNum(Math.ceil(donationCenters.length / pageLen))}> ▶▶</button>
+        <button className={`${styles.button} ${styles.small_button}`} style={{marginLeft: "10px"}} disabled={pageNum == Math.ceil(donationCenters.length / pageLen)} onClick={incrementPage}> ▶</button>
+        <button className={`${styles.button} ${styles.small_button}`} style={{marginLeft: "10px"}} disabled={pageNum == Math.ceil(donationCenters.length / pageLen)} onClick={() => setPageNum(Math.ceil(donationCenters.length / pageLen))}> ▶▶</button>
       </div>
     </div>
   )

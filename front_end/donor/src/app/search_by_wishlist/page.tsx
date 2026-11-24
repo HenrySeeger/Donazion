@@ -1,6 +1,7 @@
 'use client'
 import React from 'react'
 import SearchResults, { DonationCenter, CatalogItem } from "./boundary";
+import DonorTabs from '../donor_tabs';
 import { awsInstance } from '../AWS';
 
 export default function Home() {
@@ -55,15 +56,18 @@ export default function Home() {
     }
 
     return (
-        <SearchResults
-            items={items}
-            selectedIID={selectedIID}
-            searchedItemName={searchedItemName}
-            donationCenters={donationCenters}
-            errorMessage={errorMessage}
-            hasSearched={hasSearched}
-            onSelect={setSelectedIID}
-            onSearch={searchByItem}
-        />
+        <div>
+            <DonorTabs current="/search_by_wishlist" />
+            <SearchResults
+                items={items}
+                selectedIID={selectedIID}
+                searchedItemName={searchedItemName}
+                donationCenters={donationCenters}
+                errorMessage={errorMessage}
+                hasSearched={hasSearched}
+                onSelect={setSelectedIID}
+                onSearch={searchByItem}
+            />
+        </div>
     )
 }
